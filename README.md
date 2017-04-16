@@ -1,2 +1,18 @@
-# botanalytics
-Botanalytics - Conversational analytics &amp; engagement tool for chatbots
+# [Botanalytics](https://botanalytics.co) - Conversational analytics & engagement tool for chatbots
+
+Currently we support
+
+* [Facebook Messenger](http://docs.botanalytics.apiary.io/)
+* [Google](http://docs.botanalytics.apiary.io/)
+
+## Setup
+
+Create a free account at [https://www.botanalytics.co](https://www.botanalytics.co) and get a Token.
+
+Botanalytics is available via NPM.
+
+```bash
+npm install botanalytics
+```
+
+Follow the instructions at [http://docs.botanalytics.apiary.io/](http://docs.botanalytics.apiary.io/)
