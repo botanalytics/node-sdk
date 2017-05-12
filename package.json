@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
-  "author": "Botanalytics",
+  "author": "Enis Gayretli",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -23,8 +23,8 @@
     "facebook messenger",
     "google assistant"
   ],
-  "author": "Enis Gayretli",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "object-path": "^0.11.4",
     "request": "^2.81.0"
   }
