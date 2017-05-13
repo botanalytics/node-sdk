@@ -1,6 +1,7 @@
 const util = require('util');
 const log = new require('../util').Logger(config);
 const Base = require('./base');
+const Promise = require('bluebird');
 
 class Facebook extends Base {
 	logIncomingMessage(data, callback) {
@@ -88,12 +89,12 @@ class Facebook extends Base {
 				body: data
 			}, (err, resp, payload) => {
 				if (err) {
-					log.error('Failed to log user profile..', err);
+					log.error('Failed to log user profile.', err);
 					callback && callback(new Error('Failed to log user profile.'));
 					return reject(new Error('Failed to log user profile.'));
 				}
 
-				const message = log.checkResponse(resp, 'Successfully logged user profile..', 'Failed to log user profile..');
+				const message = log.checkResponse(resp, 'Successfully logged user profile.', 'Failed to log user profile.');
 
 				callback && callback(null, message);
 				resolve(message);
