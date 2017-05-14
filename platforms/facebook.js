@@ -51,7 +51,7 @@ class Facebook extends Base {
 				method: 'POST',
 				json: true,
 				body: {
-					recipient: recipient,
+					recipient: receipient,
 					message: data,
 					fb_token: token
 				}
