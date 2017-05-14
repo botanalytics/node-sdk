@@ -1,9 +1,13 @@
 const valid = (data, callback) => {
-  callback && callback(null, { statusCode: 200 });
+  callback && callback(null, {
+      toJSON: () => { return { statusCode: 200 } }
+  });
 };
 
 const invalid = (data, callback) => {
-  callback && callback(new Error('Invalid'), { statusCode: 500 });
+  callback && callback(new Error('Invalid'), {
+      toJSON: () => { return { statusCode: 500 } }
+  });
 };
 
 module.exports = {
