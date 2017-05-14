@@ -19,7 +19,8 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
 }
 
 
-const Botanalytics = require('botanalytics').FacebookMessenger(process.env.BOTANALYTICS_TOKEN);
+const FacebookMessenger = require('botanalytics').FacebookMessenger;
+const Botanalytics = new FacebookMessenger(process.env.BOTANALYTICS_TOKEN);
 
 app.set('port', (process.env.PORT || 5000))
 

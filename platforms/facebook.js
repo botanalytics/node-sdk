@@ -22,7 +22,6 @@ class Facebook extends Base {
 					recipient: null,
 					message: data
 				}
-
 			}, (err, resp, payload) => {
 				if (err) {
 					log.error('Failed to log incoming message.', err);

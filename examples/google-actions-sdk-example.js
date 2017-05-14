@@ -16,7 +16,8 @@
 process.env.DEBUG = 'actions-on-google:*';
 const Assistant = require('actions-on-google').ActionsSdkAssistant;
 
-const Botanalytics = require('botanalytics').GoogleAssistant(process.env.BOTANALYTICS_TOKEN);
+const GoogleAssistant = require('botanalytics').GoogleAssistant;
+const Botanalytics = new GoogleAssistant(process.env.BOTANALYTICS_TOKEN);
 
 const NAME_ACTION = 'make_name';
 const COLOR_ARGUMENT = 'color';
