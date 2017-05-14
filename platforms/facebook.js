@@ -29,7 +29,7 @@ class Facebook extends Base {
 				}
 
 				const message = this.log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-        console.log('Message', message);
+
 				callback && callback(null, message);
 				resolve(message);
 			});

@@ -39,7 +39,7 @@ class Google extends Base {
 
 		objectPath.set(data, 'timestamp', new Date().getTime());
 
-		return Promise.resolve((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			this.request({
 				url: '/messages/user/google-assistant/',
 				method: 'POST',
@@ -107,8 +107,8 @@ class Google extends Base {
 	attach(assistant, callback) {
 		if (!assistant) {
 			callback && callback(new Error('You must provide an assistant object.'));
-			return Promise.reject(new Error('You must provide an assistant object.'));
-		}
+      return Promise.reject(new Error('You must provide an assistant object.'));
+  }
 
 		this.assistant = assistant;
 		this.assistant.originalDoResponse = assistant.doResponse_;
@@ -119,7 +119,7 @@ class Google extends Base {
 
 		this.requestData = assistant.body_;
 
-		this.logIncomingMessage_(assistant.body_, callback);
+		return this.logIncomingMessage(assistant.body_, callback);
 	}
 }
 
