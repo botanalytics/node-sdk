@@ -29,10 +29,10 @@ class Google extends Base {
 	}
 
 	logIncomingMessage(data, callback) {
-		log.debug('Logging incoming message: ' + util.inspect(data));
+		this.log.debug('Logging incoming message: ' + util.inspect(data));
 
 		if (this.isDataValid(data)) {
-			log.debug('Ignoring health check...');
+			this.log.debug('Ignoring health check...');
 			callback && callback();
 			return Promise.resolve();
 		}
@@ -49,12 +49,12 @@ class Google extends Base {
 				}
 			}, (err, resp, payload) => {
 				if (err) {
-					log.error('Failed to log incoming message.', err);
+					this.log.error('Failed to log incoming message.', err);
 					callback && callback(new Error('Failed to log incoming message'));
 					return reject(new Error('Failed to log incoming message'));
 				}
 
-				const message = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+				const message = this.log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
 				callback && callback(null, message);
 				resolve(message);
@@ -73,7 +73,7 @@ class Google extends Base {
 			conversationId = objectPath.get(requestData, 'conversation.conversation_id');
 		}
 
-		log.debug('Logging incoming message: ' + util.inspect(responseData));
+		this.log.debug('Logging incoming message: ' + util.inspect(responseData));
 
 		return new Promise((resolve, reject) => {
 			this.request({
@@ -91,12 +91,12 @@ class Google extends Base {
 				}
 			}, (err, resp, payload) => {
 				if (err) {
-					log.error('Failed to log outgoing message.', err);
+					this.log.error('Failed to log outgoing message.', err);
 					callback && callback(new Error('Failed to log outgoing message'));
 					return reject(new Error('Failed to log outgoing message'));
 				}
 
-				const message = log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
+				const message = this.log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
 
 				callback && callback(null, message);
 				resolve(message);

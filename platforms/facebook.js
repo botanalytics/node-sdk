@@ -1,11 +1,10 @@
 const util = require('util');
-const log = new require('../util').Logger(config);
 const Base = require('./base');
 const Promise = require('bluebird');
 
 class Facebook extends Base {
 	logIncomingMessage(data, callback) {
-		log.debug('Logging incoming message: ' + util.inspect(data));
+		this.log.debug('Logging incoming message: ' + util.inspect(data));
 
 		if (!data) {
 			const error = new Error('Message data is required.');
@@ -24,13 +23,13 @@ class Facebook extends Base {
 				}
 			}, (err, resp, payload) => {
 				if (err) {
-					log.error('Failed to log incoming message.', err);
+					this.log.error('Failed to log incoming message.', err);
 					callback && callback(new Error('Failed to log incoming message'));
 					return reject(new Error('Failed to log incoming message'));
 				}
 
-				const message = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
+				const message = this.log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+        console.log('Message', message);
 				callback && callback(null, message);
 				resolve(message);
 			});
@@ -38,7 +37,7 @@ class Facebook extends Base {
 	}
 
 	logOutgoingMessage(data, receipient, token, callback) {
-		log.debug('Logging outgoing message: ' + util.inspect(data));
+		this.log.debug('Logging outgoing message: ' + util.inspect(data));
 
 		if (!data || !receipient || !token) {
 			const error = new Error('Message data, receipient and token is required.');
@@ -58,12 +57,12 @@ class Facebook extends Base {
 				}
 			}, (err, resp, payload) => {
 				if (err) {
-					log.error('Failed to log outgoing message.', err);
+					this.log.error('Failed to log outgoing message.', err);
 					callback && callback(new Error('Failed to log outgoing message'));
 					return reject(new Error('Failed to log outgoing message'));
 				}
 
-				const message = log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
+				const message = this.log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
 
 				callback && callback(null, message);
 				resolve(message);
@@ -72,7 +71,7 @@ class Facebook extends Base {
 	}
 
 	logUserProfile(data, callback) {
-		log.debug('Logging user profile: ' + util.inspect(data));
+		this.log.debug('Logging user profile: ' + util.inspect(data));
 
 		if (!data) {
 			const error = new Error('User data is required.');
@@ -88,12 +87,12 @@ class Facebook extends Base {
 				body: data
 			}, (err, resp, payload) => {
 				if (err) {
-					log.error('Failed to log user profile.', err);
+					this.log.error('Failed to log user profile.', err);
 					callback && callback(new Error('Failed to log user profile.'));
 					return reject(new Error('Failed to log user profile.'));
 				}
 
-				const message = log.checkResponse(resp, 'Successfully logged user profile.', 'Failed to log user profile.');
+				const message = this.log.checkResponse(resp, 'Successfully logged user profile.', 'Failed to log user profile.');
 
 				callback && callback(null, message);
 				resolve(message);

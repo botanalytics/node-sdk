@@ -1,10 +1,9 @@
 const util = require('util');
-const log = new require('../util').Logger(config);
 const request = require('request');
 
 
 class Base {
-  constructor(token, opt_config) {
+  constructor(token, opt_config = {}) {
 		if (!token) {
 			throw new Error('You must provide a Botanalytics token!');
 		}
@@ -17,8 +16,10 @@ class Base {
 
 		Object.assign(this.config, opt_config);
 
-		log.debug('Logging enabled.');
-		log.debug(`Configuration: ${util.inspect(this.config)}`)
+    this.log = new require('../util').Logger(this.config);
+
+		this.log.debug('Logging enabled.');
+		this.log.debug(`Configuration: ${util.inspect(this.config)}`)
 
 		this.request = request.defaults({
 			baseUrl: this.config.baseUrl,
