@@ -2,45 +2,45 @@ const util = require('util');
 
 exports.Logger = function(config) {
 
-	this.config = config;
+  this.config = config;
 
-	return {
+  return {
 
-		debug: (message) => {
+    debug: (message) => {
 
-			if (!this.config.debug)
-				return;
+      if (!this.config.debug)
+        return;
 
-			console.log('[Botanalytics] ' + message);
-		},
+      console.log('[Botanalytics] ' + message);
+    },
 
-		error: (message, err) => {
+    error: (message, err) => {
 
-			console.log('[Botanalytics] Error: ' + [message, util.inspect(err)].join(' ').trim());
-		},
+      console.log('[Botanalytics] Error: ' + [message, util.inspect(err)].join(' ').trim());
+    },
 
-		checkResponse: (resp, successMessage, errorMessage) => {
+    checkResponse: (resp, successMessage, errorMessage) => {
 
-			if (resp.toJSON().statusCode == 200 || resp.toJSON().statusCode == 201) {
+      if (resp.toJSON().statusCode == 200 || resp.toJSON().statusCode == 201) {
 
-				if (this.config.debug)
-					console.log('[Botanalytics] ' + successMessage);
+        if (this.config.debug)
+          console.log('[Botanalytics] ' + successMessage);
 
-				return null;
-			}
+        return null;
+      }
 
-			console.log('[Botanalytics] ' + [errorMessage, 'Response status code: ' + resp.toJSON().statusCode].join(' ').trim());
+      console.log('[Botanalytics] ' + [errorMessage, 'Response status code: ' + resp.toJSON().statusCode].join(' ').trim());
 
-			switch(resp.toJSON().statusCode) {
-				case 400:
-					return new Error('The request was unacceptable. This is often due to missing a required parameter.');
-				case 401:
-					return new Error('Your API token is invalid.');
-				case 404:
-					return new Error('Requested resource does not exist. Please check your \'baseUrl\' configuration.');
-				default:
-					return new Error('Something went wrong on Botanalytics\'s end. Try again later.');
-			}
-		}
-	}	
+      switch(resp.toJSON().statusCode) {
+        case 400:
+          return new Error('The request was unacceptable. This is often due to missing a required parameter.');
+        case 401:
+          return new Error('Your API token is invalid.');
+        case 404:
+          return new Error('Requested resource does not exist. Please check your \'baseUrl\' configuration.');
+        default:
+          return new Error('Something went wrong on Botanalytics\'s end. Try again later.');
+      }
+    }
+  }	
 }
