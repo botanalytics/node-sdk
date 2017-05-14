@@ -1,194 +1,104 @@
 const util = require('util');
+const Base = require('./base');
+const Promise = require('bluebird');
 
-module.exports = function(token, userConfig) {
+class Facebook extends Base {
+  logIncomingMessage(data, callback) {
+    this.log.debug('Logging incoming message: ' + util.inspect(data));
 
-	// Check token
-	if (!token) {
+    if (!data) {
+      const error = new Error('Message data is required.');
+      callback && callback(error);
+      return Promise.reject(error);
+    }
 
-		throw new Error('You must provide a Botanalytics token!');
-	}
+    return new Promise((resolve, reject) => {
+      this.request({
+        url: '/messages/facebook-messenger',
+        method: 'POST',
+        json: true,
+        body: {
+          recipient: null,
+          message: data
+        }
+      }, (err, resp, payload) => {
+        if (err) {
+          this.log.error('Failed to log incoming message.', err);
+          callback && callback(new Error('Failed to log incoming message'));
+          return reject(new Error('Failed to log incoming message'));
+        }
 
-	// Create default config
-	var config = {
-		baseUrl: 'https://botanalytics.co/api/v1/',
-		debug: false
-	}
+        const message = this.log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
-	// Merge user configuration into the default config
-	Object.assign(config, userConfig);
+        callback && callback(null, message);
+        resolve(message);
+      });
+    });
+  }
 
-	const log = new require('../util').Logger(config);
+  logOutgoingMessage(data, receipient, token, callback) {
+    this.log.debug('Logging outgoing message: ' + util.inspect(data));
 
-	log.debug('Logging enabled.');
+    if (!data || !receipient || !token) {
+      const error = new Error('Message data, receipient and token is required.');
+      callback && callback(error);
+      return Promise.reject(error);
+    } 
 
-	log.debug('Configuration: ' + util.inspect(config))
+    return new Promise((resolve, reject) => {
+      this.request({
+        url: '/messages/facebook-messenger',
+        method: 'POST',
+        json: true,
+        body: {
+          recipient: receipient,
+          message: data,
+          fb_token: token
+        }
+      }, (err, resp, payload) => {
+        if (err) {
+          this.log.error('Failed to log outgoing message.', err);
+          callback && callback(new Error('Failed to log outgoing message'));
+          return reject(new Error('Failed to log outgoing message'));
+        }
 
-	// Configure request defaults
-	const request = require('request').defaults({
-		baseUrl: config.baseUrl,
-		headers: {
-			'Authorization': 'Token ' + encodeURIComponent(token),
-			'Content-Type': 'application/json'
-		}
-	});
+        const message = this.log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
 
-	return {
+        callback && callback(null, message);
+        resolve(message);
+      });
+    });
+  }
 
-		logIncomingMessage: (data, callback) => {
+  logUserProfile(data, callback) {
+    this.log.debug('Logging user profile: ' + util.inspect(data));
 
-			log.debug('Logging incoming message: ' + util.inspect(data));
+    if (!data) {
+      const error = new Error('User data is required.');
+      callback && callback(error);
+      return Promise.reject(error);
+    }
 
-			if (!data) {
+    return new Promise((resolve, reject) => {
+      this.request({
+        url: '/facebook-messenger/users',
+        method: 'POST',
+        json: true,
+        body: data
+      }, (err, resp, payload) => {
+        if (err) {
+          this.log.error('Failed to log user profile.', err);
+          callback && callback(new Error('Failed to log user profile.'));
+          return reject(new Error('Failed to log user profile.'));
+        }
 
-				log.error('Message data is required.');
+        const message = this.log.checkResponse(resp, 'Successfully logged user profile.', 'Failed to log user profile.');
 
-				var err = new Error('Message data is required.');
-
-				if (callback)
-					return callback(err);
-				else
-					return err;
-			}
-
-			request({
-
-				url: '/messages/facebook-messenger',
-				method: 'POST',
-				json: true,
-				body: {
-					recipient: null,
-					message: data
-				}
-
-			}, (err, resp, payload) => {
-
-				if (err) {
-
-					log.error('Failed to log incoming message.', err);
-
-					err = new Error('Failed to log incoming message');
-
-					if (callback)
-						callback(err);
-					else
-						return err;
-				}
-
-				err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-				if (callback)
-					callback(err);
-				else
-					return err;
-			});
-		},
-
-		logOutgoingMessage: (data, recipient, token, callback) => {
-
-			log.debug('Logging outgoing message: ' + util.inspect(data));
-
-			if (!data) {
-
-				log.error('Message data is required.');
-
-				var err = new Error('Message data is required.');
-
-				if (callback)
-					return callback(err);
-				else
-					return err;
-			}
-
-			if (!recipient) {
-
-				log.error('Message recipient is required.');
-
-				var err = new Error('Message recipient is required.');
-
-				if (callback)
-					return callback(err);
-				else
-					return err;
-			}
-
-			request({
-
-				url: '/messages/facebook-messenger',
-				method: 'POST',
-				json: true,
-				body: {
-					recipient: recipient,
-					message: data,
-					fb_token: token
-				}
-
-			}, (err, resp, payload) => {
-
-				if (err) {
-
-					log.error('Failed to log outgoing message.', err);
-
-					err = new Error('Failed to log outgoing message.');
-
-					if (callback)
-						callback(err);
-					else
-						return err;
-				}
-
-				err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-				if (callback)
-					callback(err);
-				else
-					return err;
-			});
-		},
-
-		logUserProfile: (data, callback) => {
-
-			log.debug('Logging user profile: ' + util.inspect(data));
-
-			if (!data) {
-
-				log.error('User profile data is required.');
-
-				var err = new Error('User profile data is required.');
-
-				if (callback)
-					return callback(err);
-				else
-					return err;
-			}
-
-			request({
-
-				url: '/facebook-messenger/users',
-				method: 'POST',
-				json: true,
-				body: data
-
-			}, (err, resp, payload) => {
-
-				if (err) {
-
-					log.error('Failed to log user profile.', err);
-
-					err = new Error('Failed to log user profile.');
-
-					if (callback)
-						callback(err);
-					else
-						return err;
-				}
-
-				err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-				if (callback)
-					callback(err);
-				else
-					return err;
-			});
-		}
-	}
+        callback && callback(null, message);
+        resolve(message);
+      });
+    });
+  }
 };
+
+module.exports = Facebook;
