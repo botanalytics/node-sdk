@@ -57,6 +57,7 @@ module.exports = function(token, userConfig) {
 				json: true,
 				body: {
 					recipient: null,
+					timestamp: new Date().getTime(),
 					message: data
 				}
 
@@ -119,6 +120,7 @@ module.exports = function(token, userConfig) {
 				body: {
 					recipient: recipient,
 					message: data,
+					timestamp: new Date().getTime(),
 					fb_token: token
 				}
 
