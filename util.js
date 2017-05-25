@@ -1,4 +1,5 @@
 const util = require('util');
+const objectPath = require('object-path');
 
 exports.Logger = function(config) {
 
@@ -47,4 +48,10 @@ exports.Logger = function(config) {
 			}
 		}
 	}	
+}
+
+exports.setIfAvailable = (sourceObj, destObj, propertyName) => {
+
+	if (objectPath.has(sourceObj, propertyName))
+		objectPath.set(destObj, propertyName, objectPath.get(sourceObj, propertyName));
 }
