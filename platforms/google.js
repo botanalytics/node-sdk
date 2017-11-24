@@ -11,7 +11,7 @@ module.exports = function(token, userConfig) {
 
 	// Create default config
 	var config = {
-		baseUrl: 'https://botanalytics.co/api/v1/',
+		baseUrl: 'https://api.botanalytics.co/v1/',
 		debug: false
 	}
 
