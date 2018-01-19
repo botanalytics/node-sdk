@@ -21,7 +21,10 @@
     "chatbots",
     "conversational analytics",
     "facebook messenger",
-    "google assistant"
+    "google assistant",
+    "amazon lex",
+    "amazon alexa",
+    "ibm watson"
   ],
   "author": "Enis Gayretli",
   "dependencies": {
