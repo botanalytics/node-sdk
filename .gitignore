@@ -38,3 +38,5 @@ jspm_packages
 
 # macosx
 *.DS_Store
+.idea/
+package-lock.json
