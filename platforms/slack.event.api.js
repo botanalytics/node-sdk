@@ -38,6 +38,11 @@ module.exports = function (token, userConfig) {
                 return;
             }
 
+            if(message.type === "url_verification" || message.type !== "event_callback"){
+                log.debug(`Ignoring ${message.type} message.`);
+                return;
+            }
+
             //log incoming message
             log.debug('Logging incoming message...\n' + util.inspect(message));
             // create copy of the message
