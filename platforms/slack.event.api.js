@@ -20,7 +20,7 @@ module.exports = function (token, slackBotToken, userConfig) {
     this._isInited = false;
     this._isFetched = false;
     //logger
-    this._logger = new require('../../util').Logger(this._config);
+    this._logger = new require('../util').Logger(this._config);
     this._logger.debug('Logging enabled.');
     this._logger.debug('Configuration: ' + util.inspect(this._config));
 
@@ -48,7 +48,7 @@ module.exports = function (token, slackBotToken, userConfig) {
                 if(err) {
                     self._logger.error('Failed to log init message.', err);
                     self._logger.debug('Retrying...');
-                    setTimeout(self.init.bind(self, data), 10000);
+                    setTimeout(self._init.bind(self, data), 10000);
                 }
                 else{
                   self._isInited = true;
