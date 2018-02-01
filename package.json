@@ -1,6 +1,6 @@
 {
   "name": "botanalytics",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
   "author": "Botanalytics",
@@ -25,6 +25,7 @@
     "amazon lex",
     "amazon alexa",
     "ibm watson"
+    "botkit"
   ],
   "author": "Enis Gayretli",
   "dependencies": {

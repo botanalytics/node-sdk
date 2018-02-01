@@ -68,7 +68,7 @@ module.exports = function (token, userConfig) {
 
             request({
 
-                url: '/messages/watson/',
+                url: '/integrations/botkit/watson/',
                 method: 'POST',
                 json: true,
                 body: {
@@ -125,7 +125,7 @@ module.exports = function (token, userConfig) {
 
             request({
 
-                url: '/messages/watson/',
+                url: '/integrations/botkit/watson/',
                 method: 'POST',
                 json: true,
                 body: {
