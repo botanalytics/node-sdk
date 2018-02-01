@@ -3,7 +3,7 @@
   "version": "2.0.4",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
-  "author": "Botanalytics",
+  "author": "Enis Gayretli",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,7 +27,6 @@
     "ibm watson"
     "botkit"
   ],
-  "author": "Enis Gayretli",
   "dependencies": {
     "object-path": "^0.11.4",
     "request": "^2.81.0"
