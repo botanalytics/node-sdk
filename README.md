@@ -4,11 +4,13 @@ Currently we support
 
 
 * [Facebook Messenger](http://docs.botanalytics.apiary.io/)
-* [Google](http://docs.botanalytics.apiary.io/)
+* [Google Actions](http://docs.botanalytics.apiary.io/)
 * [Amazon Alexa](http://docs.botanalytics.apiary.io/)
+* [Amazon Lex](http://docs.botanalytics.apiary.io/)
 * [Viber](http://docs.botanalytics.apiary.io/)
 * [Kik](http://docs.botanalytics.apiary.io/)
 * [Microsoft Bot Framework](http://docs.botanalytics.apiary.io/)
+* [Howdy's Botkit](http://docs.botanalytics.apiary.io/)
 
 ## Setup
 
