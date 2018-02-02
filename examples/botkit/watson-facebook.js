@@ -1,7 +1,7 @@
 'use strict';
 
 const BotKit = require('botkit');
-const BotAnalyticsWatson = require("localbotanalytics").BotkitMiddlewares.Watson(process.env.BOTANALYTICS_TOKEN, {debug:false});
+const BotAnalyticsWatson = require("botanalytics").BotkitMiddlewares.Watson(process.env.BOTANALYTICS_TOKEN, {debug:false});
 
 const facebookController = BotKit.facebookbot({
     access_token : process.env.FACEBOOK_PAGE_TOKEN,
