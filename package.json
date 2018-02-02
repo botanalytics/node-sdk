@@ -24,7 +24,7 @@
     "google assistant",
     "amazon lex",
     "amazon alexa",
-    "ibm watson"
+    "ibm watson",
     "botkit"
   ],
   "dependencies": {
