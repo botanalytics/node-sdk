@@ -97,7 +97,7 @@ module.exports = function (token, slackBotToken, userConfig) {
         //send
         req({
 
-            url: self._config.baseUrl+'/messages/slack/eventapi/',
+            url: self._config.baseUrl+'/messages/slack/event/',
             method: 'POST',
             json: true,
             headers: {
