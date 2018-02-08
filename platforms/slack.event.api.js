@@ -104,9 +104,7 @@ module.exports = function (token, slackBotToken, userConfig) {
                 'Authorization': 'Token ' + encodeURIComponent(self.token),
                 'Content-Type': 'application/json'
             },
-            body: {
-                message: payload
-            }
+            body: payload
 
         }, (err, resp, payload) => {
 
