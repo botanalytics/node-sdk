@@ -85,7 +85,7 @@ module.exports = function (token, slackBotToken, userConfig) {
             return;
         }
 
-        if(message.type === "url_verification" || message.type !== "event_callback"){
+        if(message.type === "url_verification" || message.type !== "event_callback" || message.type!=="interactive_message"){
             this._logger.debug(`Ignoring ${message.type} message.`);
             return;
         }
@@ -94,34 +94,62 @@ module.exports = function (token, slackBotToken, userConfig) {
         self._logger.debug('Logging incoming message...\n' + util.inspect(message));
         // create copy of the message
         const payload = Object.assign({}, message);
-        //send
-        req({
+        if (payload.type === "interactive_message")
+            req({
 
-            url: self._config.baseUrl+'/messages/slack/event/',
-            method: 'POST',
-            json: true,
-            headers: {
-                'Authorization': 'Token ' + encodeURIComponent(self.token),
-                'Content-Type': 'application/json'
-            },
-            body: payload
+                url: self._config.baseUrl+'/messages/slack/interactive/',
+                method: 'POST',
+                json: true,
+                headers: {
+                    'Authorization': 'Token ' + encodeURIComponent(self.token),
+                    'Content-Type': 'application/json'
+                },
+                body: payload
 
-        }, (err, resp, payload) => {
-
-            if (err) {
-
-                self._logger.error('Failed to log incoming message.', err);
-
-            } else {
-
-                err = self._logger.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+            }, (err, resp, payload) => {
 
                 if (err) {
 
                     self._logger.error('Failed to log incoming message.', err);
+
+                } else {
+
+                    err = self._logger.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+
+                    if (err) {
+
+                        self._logger.error('Failed to log incoming message.', err);
+                    }
                 }
-            }
-        });
+            });
+        else
+            req({
+
+                url: self._config.baseUrl+'/messages/slack/event/',
+                method: 'POST',
+                json: true,
+                headers: {
+                    'Authorization': 'Token ' + encodeURIComponent(self.token),
+                    'Content-Type': 'application/json'
+                },
+                body: payload
+
+            }, (err, resp, payload) => {
+
+                if (err) {
+
+                    self._logger.error('Failed to log incoming message.', err);
+
+                } else {
+
+                    err = self._logger.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+
+                    if (err) {
+
+                        self._logger.error('Failed to log incoming message.', err);
+                    }
+                }
+            });
     };
     
     return this;
