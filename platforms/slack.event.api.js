@@ -52,6 +52,7 @@ module.exports = function (token, slackBotToken, userConfig) {
                 }
                 else{
                   self._isInited = true;
+                  self._logger.debug("Bot info is initialized...");
                 }
 
             });
