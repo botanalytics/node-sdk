@@ -29,6 +29,7 @@ module.exports = function (token, slackBotToken, userConfig) {
         if(!this._isInited){
             //context referencing
             const self = this;
+            self._logger.debug("Initiliazing bot info...");
             //send
             req({
 
@@ -39,9 +40,8 @@ module.exports = function (token, slackBotToken, userConfig) {
                     'Authorization': 'Token '+encodeURIComponent(self.token),
                     'Content-Type': 'application/json'
                 },
-                body: {
-                    message: JSON.parse(data)
-                }
+                body: JSON.parse(data)
+
 
             }, (err, resp, payload) => {
 
@@ -120,7 +120,7 @@ module.exports = function (token, slackBotToken, userConfig) {
                 }
             });
         }
-        else if (message.type !== "event_callback"){
+        else if (message.type === "event_callback"){
             const self = this;
             //log incoming message
             self._logger.debug('Logging incoming message...\n' + util.inspect(message));
@@ -157,7 +157,7 @@ module.exports = function (token, slackBotToken, userConfig) {
         }
         else
             this._logger.debug(`Ignoring ${message.type} message.`);
-        
+
     };
     
     return this;
