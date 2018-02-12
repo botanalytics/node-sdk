@@ -85,16 +85,13 @@ module.exports = function (token, slackBotToken, userConfig) {
             return;
         }
 
-        if(message.type === "url_verification" || message.type !== "event_callback" || message.type!=="interactive_message"){
-            this._logger.debug(`Ignoring ${message.type} message.`);
-            return;
-        }
-        const self = this;
-        //log incoming message
-        self._logger.debug('Logging incoming message...\n' + util.inspect(message));
-        // create copy of the message
-        const payload = Object.assign({}, message);
-        if (payload.type === "interactive_message")
+        if (message.type === "interactive_message"){
+            const self = this;
+            //log incoming message
+            self._logger.debug('Logging incoming message...\n' + util.inspect(message));
+            // create copy of the message
+            const payload = Object.assign({}, message);
+            //log
             req({
 
                 url: self._config.baseUrl+'/messages/slack/interactive/',
@@ -122,7 +119,14 @@ module.exports = function (token, slackBotToken, userConfig) {
                     }
                 }
             });
-        else
+        }
+        else if (message.type !== "event_callback"){
+            const self = this;
+            //log incoming message
+            self._logger.debug('Logging incoming message...\n' + util.inspect(message));
+            // create copy of the message
+            const payload = Object.assign({}, message);
+
             req({
 
                 url: self._config.baseUrl+'/messages/slack/event/',
@@ -150,6 +154,10 @@ module.exports = function (token, slackBotToken, userConfig) {
                     }
                 }
             });
+        }
+        else
+            this._logger.debug(`Ignoring ${message.type} message.`);
+        
     };
     
     return this;
