@@ -71,7 +71,7 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
     this._request = require('request').defaults({
         baseUrl: this._config.baseUrl,
         headers: {
-            'Authorization': 'Token ' + encodeURIComponent(this._config.token),
+            'Authorization': 'Token ' + encodeURIComponent(this._botanalyticsToken),
             'Content-Type': 'application/json'
         }
     });
@@ -99,26 +99,23 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
             }
             else{
                 setInterval(self.fetch.bind(self), 3600000);
-				if(self._config.debug){
-					console.log("Updating team info...");
-				}
+				if(self._config.debug)
+					console.log(`Updating team info for ${self._slackBotToken}`);
             }
         });
     };
     this.fetch = function () {
         const self = this;
         // check rtm start
-        self._request.post({url : "https://slack.com/api/rtm.start", form : {token : self._slackBotToken}}, function (err, resp, body) {
+        require("request").post({url : "https://slack.com/api/rtm.start", form : {token : self._slackBotToken}}, function (err, resp, body) {
 
-            if(JSON.parse(body).ok === false)
+            if(err || JSON.parse(body).ok === false)
                 setTimeout(self.fetch.bind(self), 10000);
             else{
                 self._init(body);
             	if(self._config.debug)
-            		console.log("Fetched team info...");
+            		console.log(`Fetched team info for ${self._slackBotToken}`);
 			}
-
-
         });
     };
     return this;

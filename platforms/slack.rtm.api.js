@@ -8,14 +8,11 @@ module.exports = function(token, userConfig) {
     if (!token || token.constructor !== String)
         throw new Error('You must provide a Botanalytics token!');
 
-    // Create default config
-    const config = {
+    // Merge user configuration into the default config
+    const config = Object.assign({
         baseUrl: 'https://api.botanalytics.co/v1/',
         debug: false
-    };
-
-    // Merge user configuration into the default config
-    Object.assign(config, userConfig);
+    }, userConfig);
 
     const log = new BotanalyticsUtil.Logger(config);
 
