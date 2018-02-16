@@ -1,15 +1,12 @@
 const util = require('util');
-const objectPath = require('object-path');
-
-const EVENTS_AUTHENTICATED = 'authenticated';
+const BotanalyticsUtil = require("../util");
 const EVENTS_MESSAGE = 'message';
 
 module.exports = function(token, userConfig) {
 
     // Check token
-    if (!token)
+    if (!token || token.constructor !== String)
         throw new Error('You must provide a Botanalytics token!');
-
 
     // Create default config
     const config = {
@@ -20,7 +17,7 @@ module.exports = function(token, userConfig) {
     // Merge user configuration into the default config
     Object.assign(config, userConfig);
 
-    const log = new require('../util').Logger(config);
+    const log = new BotanalyticsUtil.Logger(config);
 
     log.debug('Logging enabled.');
 
@@ -49,6 +46,8 @@ module.exports = function(token, userConfig) {
                 else
                     return err;
             }
+
+            new BotanalyticsUtil.SlackFetcher(token, rtm._token).fetch();
 
             this.rtmRef = rtm;
             this.rtmRef.originalSendMessage = rtm.sendMessage;
@@ -96,7 +95,7 @@ module.exports = function(token, userConfig) {
             };
 
             // Attach to authenticated event
-            rtm.on(EVENTS_AUTHENTICATED, (rtmStartData) => {
+/*            rtm.on(EVENTS_AUTHENTICATED, (rtmStartData) => {
 
                 log.debug('Initializing bot: ' + util.inspect(rtmStartData));
 
@@ -124,7 +123,7 @@ module.exports = function(token, userConfig) {
                     if (callback)
                         callback(err);
                 });
-            });
+            });*/
 
             // Attach to message event
             rtm.on(EVENTS_MESSAGE, (message) => {

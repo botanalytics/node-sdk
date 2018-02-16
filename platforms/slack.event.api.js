@@ -1,82 +1,36 @@
 'use strict';
 const util = require('util');
-const req = require('request');
+const request = require('request');
+const BotanalyticsUtil = require("../util");
 
 module.exports = function (token, slackBotToken, userConfig) {
     // Check token
     if(!token || token.constructor !== String)
         throw new Error('You must provide a Botanalytics token!');
-    this.token = token;
+    this._token = token;
     //check slack token
     if(!slackBotToken || slackBotToken.constructor !== String)
         throw new Error('You must provide a Slack bot token!');
-    this.slackBotToken = slackBotToken;
+
     // Merge user configuration into the default config
-    this._config = Object.assign({
+    this.config = Object.assign({
         debug: false,
-        baseUrl : "https://api.botanalytics.co/v1"
+        baseUrl : "https://api.botanalytics.co/v1/"
     }, userConfig);
-    //state definers
-    this._isInited = false;
-    this._isFetched = false;
     //logger
-    this._logger = new require('../util').Logger(this._config);
+    this._logger = new BotanalyticsUtil.Logger(this.config);
     this._logger.debug('Logging enabled.');
-    this._logger.debug('Configuration: ' + util.inspect(this._config));
+    this._logger.debug('Configuration: ' + util.inspect(this.config));
 
-    this._init = function (data) {
-
-        if(!this._isInited){
-            //context referencing
-            const self = this;
-            self._logger.debug("Initiliazing bot info...");
-            //send
-            req({
-
-                url: self._config.baseUrl+'/bots/slack/initialize/',
-                method: 'POST',
-                json: true,
-                headers: {
-                    'Authorization': 'Token '+encodeURIComponent(self.token),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.parse(data)
-
-
-            }, (err, resp, payload) => {
-
-                if(err) {
-                    self._logger.error('Failed to log init message.', err);
-                    self._logger.debug('Retrying...');
-                    setTimeout(self._init.bind(self, data), 10000);
-                }
-                else{
-                  self._isInited = true;
-                  self._logger.debug("Bot info is initialized...");
-                }
-
-            });
+    this._req = request.defaults({
+        baseUrl: this.config.baseUrl,
+        headers: {
+            'Authorization': 'Token ' + encodeURIComponent(token),
+            'Content-Type': 'application/json'
         }
-    };
-    this._fetch = function () {
-        if(!this._isFetched){
-            const self = this;
-            // check rtm start
-            req.post({url : "https://slack.com/api/rtm.start", form : {token : self.slackBotToken}}, function (err, resp, body) {
+    });
 
-                if(JSON.parse(body).ok === false) {
-                    setTimeout(self._fetch.bind(self), 10000);
-                    self._logger.debug(body);
-                }
-                else {
-                    self._init(body);
-                    self._isFetched = true;
-                }
-            });
-        }
-    };
-    //init info message
-    this._fetch();
+    new BotanalyticsUtil.SlackFetcher(this._token, slackBotToken).fetch();
 
     this.log = function (message) {
 
@@ -87,19 +41,20 @@ module.exports = function (token, slackBotToken, userConfig) {
         }
 
         if (message.type === "interactive_message"){
+
             const self = this;
             //log incoming message
             self._logger.debug('Logging incoming message...\n' + util.inspect(message));
             // create copy of the message
             const payload = Object.assign({}, message);
             //log
-            req({
+            self._req({
 
-                url: self._config.baseUrl+'/messages/slack/interactive/',
+                url: '/messages/slack/interactive/',
                 method: 'POST',
                 json: true,
                 headers: {
-                    'Authorization': 'Token ' + encodeURIComponent(self.token),
+                    'Authorization': 'Token ' + encodeURIComponent(self._token),
                     'Content-Type': 'application/json'
                 },
                 body: payload
@@ -122,19 +77,20 @@ module.exports = function (token, slackBotToken, userConfig) {
             });
         }
         else if (message.type === "event_callback"){
+
             const self = this;
             //log incoming message
             self._logger.debug('Logging incoming message...\n' + util.inspect(message));
             // create copy of the message
             const payload = Object.assign({}, message);
 
-            req({
+            self._req({
 
-                url: self._config.baseUrl+'/messages/slack/event/',
+                url: '/messages/slack/event/',
                 method: 'POST',
                 json: true,
                 headers: {
-                    'Authorization': 'Token ' + encodeURIComponent(self.token),
+                    'Authorization': 'Token ' + encodeURIComponent(self._token),
                     'Content-Type': 'application/json'
                 },
                 body: payload
