@@ -47,7 +47,7 @@ module.exports = function(token, userConfig) {
                     return err;
             }
 
-            new BotanalyticsUtil.SlackFetcher(token, rtm._token).fetch();
+            new BotanalyticsUtil.SlackFetcher(token, rtm._token, config).fetch();
 
             this.rtmRef = rtm;
             this.rtmRef.originalSendMessage = rtm.sendMessage;

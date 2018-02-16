@@ -1,6 +1,5 @@
 const util = require('util');
 const objectPath = require('object-path');
-const request = require("request");
 
 exports.Logger = function(config) {
 
@@ -57,17 +56,32 @@ exports.setIfAvailable = (sourceObj, destObj, propertyName) => {
 		objectPath.set(destObj, propertyName, objectPath.get(sourceObj, propertyName));
 };
 
-exports.SlackFetcher = function (botanalyticsToken, slackBotToken) {
+exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
+
+	if(!botanalyticsToken || !slackBotToken || !config)
+		console.log("Missing parameter!");
 
 	this._botanalyticsToken = botanalyticsToken;
 	this._slackBotToken = slackBotToken;
+	this._config = Object.assign({
+        baseUrl: 'https://api.botanalytics.co/v1/',
+        debug: false
+    }, config);
+
+    this._request = require('request').defaults({
+        baseUrl: this._config.baseUrl,
+        headers: {
+            'Authorization': 'Token ' + encodeURIComponent(this._config.token),
+            'Content-Type': 'application/json'
+        }
+    });
     this._init = function (data) {
 
         const self = this;
         //send
-        request({
+        self._request({
 
-            url: 'https://api.botanalytics.co/v1/bots/slack/initialize/',
+            url: '/bots/slack/initialize/',
             method: 'POST',
             json: true,
             headers: {
@@ -83,20 +97,27 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken) {
                 console.error(`Failed to log team info message for slack bot token : ${self._slackBotToken}`, err);
                 setTimeout(self._init.bind(self, data), 10000);
             }
-            else
+            else{
                 setInterval(self.fetch.bind(self), 3600000);
-
+				if(self._config.debug){
+					console.log("Updating team info...");
+				}
+            }
         });
     };
     this.fetch = function () {
         const self = this;
         // check rtm start
-        request.post({url : "https://slack.com/api/rtm.start", form : {token : self._slackBotToken}}, function (err, resp, body) {
+        self._request.post({url : "https://slack.com/api/rtm.start", form : {token : self._slackBotToken}}, function (err, resp, body) {
 
             if(JSON.parse(body).ok === false)
                 setTimeout(self.fetch.bind(self), 10000);
-            else
+            else{
                 self._init(body);
+            	if(self._config.debug)
+            		console.log("Fetched team info...");
+			}
+
 
         });
     };

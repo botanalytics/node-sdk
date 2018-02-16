@@ -30,7 +30,7 @@ module.exports = function (token, slackBotToken, userConfig) {
         }
     });
 
-    new BotanalyticsUtil.SlackFetcher(this._token, slackBotToken).fetch();
+    new BotanalyticsUtil.SlackFetcher(this._token, slackBotToken, this.config).fetch();
 
     this.log = function (message) {
 
