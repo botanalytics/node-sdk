@@ -80,7 +80,7 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken) {
         }, (err, resp, payload) => {
 
             if(err) {
-                console.error("Failed to log team info message for slack bot token : "+self._slackBotToken, err);
+                console.error(`Failed to log team info message for slack bot token : ${self._slackBotToken}`, err);
                 setTimeout(self._init.bind(self, data), 10000);
             }
             else
@@ -93,10 +93,8 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken) {
         // check rtm start
         request.post({url : "https://slack.com/api/rtm.start", form : {token : self._slackBotToken}}, function (err, resp, body) {
 
-            if(JSON.parse(body).ok === false) {
+            if(JSON.parse(body).ok === false)
                 setTimeout(self.fetch.bind(self), 10000);
-                self._logger.debug(body);
-            }
             else
                 self._init(body);
 

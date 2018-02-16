@@ -94,37 +94,6 @@ module.exports = function(token, userConfig) {
                 });
             };
 
-            // Attach to authenticated event
-/*            rtm.on(EVENTS_AUTHENTICATED, (rtmStartData) => {
-
-                log.debug('Initializing bot: ' + util.inspect(rtmStartData));
-
-                request({
-
-                    url: '/bots/slack/initialize/',
-                    method: 'POST',
-                    json: true,
-                    body: rtmStartData
-
-                }, (err, resp, payload) => {
-
-                    if (err) {
-
-                        log.error('Failed to initialize bot.', err);
-
-                        if (callback)
-                            callback(new Error('Failed to initialize bot'));
-
-                        return;
-                    }
-
-                    err = log.checkResponse(resp, 'Successfully initialized bot.', 'Failed to initialize bot.');
-
-                    if (callback)
-                        callback(err);
-                });
-            });*/
-
             // Attach to message event
             rtm.on(EVENTS_MESSAGE, (message) => {
 
