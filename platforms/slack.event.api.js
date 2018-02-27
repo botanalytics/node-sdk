@@ -25,7 +25,7 @@ module.exports = function (token, slackBotToken, userConfig) {
     this._req = request.defaults({
         baseUrl: this.config.baseUrl,
         headers: {
-            'Authorization': 'Token ' + encodeURIComponent(token),
+            'Authorization': 'Token ' + encodeURIComponent(this._token),
             'Content-Type': 'application/json'
         }
     });
