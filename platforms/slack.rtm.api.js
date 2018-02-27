@@ -46,6 +46,94 @@ module.exports = function(token, userConfig) {
             new BotanalyticsUtil.SlackFetcher(token, rtm._token, config).fetch();
 
             this.rtmRef = rtm;
+            this.rtmRef.originalUpdateMessage = rtm.updateMessage;
+            this.rtmRef.updateMessage = function(message,optCb){
+
+                log.debug('Logging message update:'+message.text);
+
+                this.rtmRef.originalUpdateMessage(message, optCb);
+
+                const payload = {
+                    message : {
+                        type:'message',
+                        channel : message.channel,
+                        text : message.text,
+                        user : this.activeUserId,
+                        ts : (new Date().getTime() / 1000) + "",
+                        team : this.activeTeamId,
+                        isBot: true
+                    }
+                };
+
+                request({
+
+                    url: '/messages/slack/',
+                    method: 'POST',
+                    json: true,
+                    body: payload
+
+                }, (err, resp, payload) => {
+
+                    if (err) {
+
+                        log.error('Failed to log outgoing message.', err);
+
+                        if (callback)
+                            callback(new Error('Failed to log outgoing message'));
+
+                        return;
+                    }
+
+                    err = log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
+
+                    if (callback)
+                        callback(err);
+                });
+            };
+
+            this.rtmRef.originalSendTyping = rtm.sendTyping;
+
+            this.rtmRef.sendTyping = function (channelId) {
+                log.debug("Sending 'typing' message to channel:"+channelId);
+                this.rtmRef.originalSendTyping(channelId);
+                const payload = {
+                    message : {
+                        type: "typing",
+                        text: "",
+                        channel : channelId,
+                        user : this.activeUserId,
+                        ts : (new Date().getTime() / 1000) + "",
+                        team : this.activeTeamId,
+                        isBot: true
+                    }
+                };
+
+                request({
+
+                    url: '/messages/slack/',
+                    method: 'POST',
+                    json: true,
+                    body: payload
+
+                }, (err, resp, payload) => {
+
+                    if (err) {
+
+                        log.error('Failed to log outgoing message.', err);
+
+                        if (callback)
+                            callback(new Error('Failed to log outgoing message'));
+
+                        return;
+                    }
+
+                    err = log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
+
+                    if (callback)
+                        callback(err);
+                });
+            };
+            
             this.rtmRef.originalSendMessage = rtm.sendMessage;
 
             this.rtmRef.sendMessage = function(text, channel, cb) {
@@ -58,6 +146,7 @@ module.exports = function(token, userConfig) {
                     message: {
                         type: "message",
                         channel: channel,
+                        text : text,
                         user: this.activeUserId,
                         ts: (new Date().getTime() / 1000) + "",
                         team: this.activeTeamId,
