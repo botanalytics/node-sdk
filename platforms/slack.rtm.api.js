@@ -51,7 +51,7 @@ module.exports = function(token, userConfig) {
 
                 log.debug('Logging message update:'+message.text);
 
-                this.rtmRef.originalUpdateMessage(message, optCb);
+                this.originalUpdateMessage(message, optCb);
 
                 const payload = {
                     message : {
@@ -95,7 +95,7 @@ module.exports = function(token, userConfig) {
 
             this.rtmRef.sendTyping = function (channelId) {
                 log.debug("Sending 'typing' message to channel:"+channelId);
-                this.rtmRef.originalSendTyping(channelId);
+                this.originalSendTyping(channelId);
                 const payload = {
                     message : {
                         type: "typing",
