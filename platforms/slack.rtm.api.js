@@ -1,6 +1,5 @@
 const util = require('util');
 const BotanalyticsUtil = require("../util");
-const EVENTS_MESSAGE = 'message';
 
 module.exports = function(token, userConfig) {
 
@@ -61,7 +60,8 @@ module.exports = function(token, userConfig) {
                         channel: channel,
                         user: this.activeUserId,
                         ts: (new Date().getTime() / 1000) + "",
-                        team: this.activeTeamId
+                        team: this.activeTeamId,
+                        isBot : true
                     }
                 };
 
@@ -92,7 +92,7 @@ module.exports = function(token, userConfig) {
             };
 
             // Attach to message event
-            rtm.on(EVENTS_MESSAGE, (message) => {
+            rtm.on('message', (message) => {
 
                 log.debug('Logging incoming message: ' + util.inspect(message));
 
@@ -102,7 +102,7 @@ module.exports = function(token, userConfig) {
                     method: 'POST',
                     json: true,
                     body: {
-                        message: message
+                        message: Object.assign({isBot:false}, message)
                     }
 
                 }, (err, resp, payload) => {
