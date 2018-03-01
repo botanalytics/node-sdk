@@ -179,7 +179,42 @@ module.exports = function(token, userConfig) {
                         callback(err);
                 });
             };
+            //Attach to user typing event
+            rtm.on('user_typing', (message) => {
 
+                log.debug('Logging incoming message: '+ util.inspect(message));
+                request({
+
+                    url: '/messages/slack/',
+                    method: 'POST',
+                    json: true,
+                    body: {
+                        message: Object.assign({
+                            isBot:false,
+                            text:"",
+                            team:rtm.activeTeamId,
+                            ts: (new Date().getTime() / 1000) + ""
+                        }, message)
+                    }
+
+                }, (err, resp, payload) => {
+
+                    if (err) {
+
+                        log.error('Failed to log incoming message.', err);
+
+                        if (callback)
+                            callback(new Error('Failed to log incoming message'));
+
+                        return;
+                    }
+
+                    err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+
+                    if (callback)
+                        callback(err);
+                });
+            });
             // Attach to message event
             rtm.on('message', (message) => {
 
