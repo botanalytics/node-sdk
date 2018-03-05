@@ -54,15 +54,13 @@ module.exports = function(token, userConfig) {
                 this.originalUpdateMessage(message, optCb);
 
                 const payload = {
-                    message : {
-                        type:'message',
-                        channel : message.channel,
-                        text : message.text,
-                        user : this.activeUserId,
-                        ts : (new Date().getTime() / 1000) + "",
-                        team : this.activeTeamId,
-                        isBot: true
-                    }
+                    type:'message',
+                    channel : message.channel,
+                    text : message.text,
+                    user : this.activeUserId,
+                    ts : (new Date().getTime() / 1000) + "",
+                    team : this.activeTeamId,
+                    isBot: true
                 };
 
                 request({
@@ -97,15 +95,13 @@ module.exports = function(token, userConfig) {
                 log.debug("Sending 'typing' message to channel:"+channelId);
                 this.originalSendTyping(channelId);
                 const payload = {
-                    message : {
-                        type: "typing",
-                        text: "",
-                        channel : channelId,
-                        user : this.activeUserId,
-                        ts : (new Date().getTime() / 1000) + "",
-                        team : this.activeTeamId,
-                        isBot: true
-                    }
+                    type: "typing",
+                    text: "",
+                    channel : channelId,
+                    user : this.activeUserId,
+                    ts : (new Date().getTime() / 1000) + "",
+                    team : this.activeTeamId,
+                    isBot: true
                 };
 
                 request({
@@ -143,15 +139,13 @@ module.exports = function(token, userConfig) {
                 this.originalSendMessage(text,channel,cb);
 
                 const payload = {
-                    message: {
-                        type: "message",
-                        channel: channel,
-                        text : text,
-                        user: this.activeUserId,
-                        ts: (new Date().getTime() / 1000) + "",
-                        team: this.activeTeamId,
-                        isBot : true
-                    }
+                    type: "message",
+                    channel: channel,
+                    text : text,
+                    user: this.activeUserId,
+                    ts: (new Date().getTime() / 1000) + "",
+                    team: this.activeTeamId,
+                    isBot : true
                 };
 
                 request({
@@ -188,15 +182,12 @@ module.exports = function(token, userConfig) {
                     url: '/messages/slack/',
                     method: 'POST',
                     json: true,
-                    body: {
-                        message: Object.assign({
+                    body:  Object.assign({
                             isBot:false,
                             text:"",
                             team:rtm.activeTeamId,
                             ts: (new Date().getTime() / 1000) + ""
                         }, message)
-                    }
-
                 }, (err, resp, payload) => {
 
                     if (err) {
@@ -225,10 +216,7 @@ module.exports = function(token, userConfig) {
                     url: '/messages/slack/',
                     method: 'POST',
                     json: true,
-                    body: {
-                        message: Object.assign({isBot:false}, message)
-                    }
-
+                    body: Object.assign({isBot:false, channel:rtm.activeChannelId, team: rtm.activeTeamId, user:rtm.activeUserId}, message)
                 }, (err, resp, payload) => {
 
                     if (err) {
