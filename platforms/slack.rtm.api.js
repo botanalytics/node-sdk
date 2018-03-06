@@ -60,7 +60,7 @@ module.exports = function(token, userConfig) {
                     user : this.activeUserId,
                     ts : (new Date().getTime() / 1000) + "",
                     team : this.activeTeamId,
-                    isBot: true
+                    is_bot: true
                 };
 
                 request({
@@ -92,16 +92,16 @@ module.exports = function(token, userConfig) {
             this.rtmRef.originalSendTyping = rtm.sendTyping;
 
             this.rtmRef.sendTyping = function (channelId) {
-                log.debug("Sending 'typing' message to channel:"+channelId);
+                log.debug("Sending 'bot_typing' message to channel:"+channelId);
                 this.originalSendTyping(channelId);
                 const payload = {
-                    type: "typing",
+                    type: "bot_typing",
                     text: "",
                     channel : channelId,
                     user : this.activeUserId,
                     ts : (new Date().getTime() / 1000) + "",
                     team : this.activeTeamId,
-                    isBot: true
+                    is_bot: true
                 };
 
                 request({
@@ -145,7 +145,7 @@ module.exports = function(token, userConfig) {
                     user: this.activeUserId,
                     ts: (new Date().getTime() / 1000) + "",
                     team: this.activeTeamId,
-                    isBot : true
+                    is_bot : true
                 };
 
                 request({
@@ -183,7 +183,7 @@ module.exports = function(token, userConfig) {
                     method: 'POST',
                     json: true,
                     body:  Object.assign({
-                            isBot:false,
+                            is_bot:false,
                             text:"",
                             team:rtm.activeTeamId,
                             ts: (new Date().getTime() / 1000) + ""
@@ -216,7 +216,7 @@ module.exports = function(token, userConfig) {
                     url: '/messages/slack/',
                     method: 'POST',
                     json: true,
-                    body: Object.assign({isBot:false, channel:rtm.activeChannelId, team: rtm.activeTeamId, user:rtm.activeUserId}, message)
+                    body: Object.assign({is_bot:false, channel:rtm.activeChannelId, team: rtm.activeTeamId, user:rtm.activeUserId}, message)
                 }, (err, resp, payload) => {
 
                     if (err) {
