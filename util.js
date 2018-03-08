@@ -36,13 +36,10 @@ exports.Logger = function(config) {
 
 				case 400:
 					return new Error('The request was unacceptable. This is often due to missing a required parameter.');
-					break;
 				case 401:
 					return new Error('Your API token is invalid.');
-					break;
 				case 404:
 					return new Error('Requested resource does not exist. Please check your \'baseUrl\' configuration.');
-					break;
 				default:
 					return new Error('Something went wrong on Botanalytics\'s end. Try again later.');
 			}
