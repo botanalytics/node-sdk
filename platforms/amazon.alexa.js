@@ -87,63 +87,35 @@ module.exports = function(token, userConfig) {
                         listeners.forEach(function (listener) {
                             self.handler.addListener(':responseReady', function () {
 
-                                Promise.all([self.event, self.handler.response].map(function (payload, index) {
+                                return new Promise(function (resolve, reject) {
+                                    request({
+                                        url: '/messages/user/amazon-alexa/',
+                                        method: 'POST',
+                                        json: true,
+                                        body: {
+                                            user:self.event,
+                                            bot:self.handler.response
+                                        }
+                                    }, (err, resp, payload) => {
 
-                                    if(index===0)
-                                        return new Promise(function (resolve, reject) {
-                                            request({
-                                                url: '/messages/user/amazon-alexa/',
-                                                method: 'POST',
-                                                json: true,
-                                                body: self.event
-                                            }, (err, resp, payload) => {
+                                        if (err) {
 
-                                                if (err) {
+                                            log.error('Failed to log incoming message.', err);
 
-                                                    log.error('Failed to log incoming message.', err);
+                                            if (callback)
+                                                callback(new Error('Failed to log incoming message'));
 
-                                                    if (callback)
-                                                        callback(new Error('Failed to log incoming message'));
+                                        } else {
 
-                                                } else {
+                                            err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
-                                                    err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-                                                    if (callback)
-                                                        callback(err);
-                                                }
-                                                resolve();
-                                            });
-                                        });
-
-                                    return new Promise(function (resolve, reject) {
-                                        request({
-
-                                            url: '/messages/bot/amazon-alexa/',
-                                            method: 'POST',
-                                            json: true,
-                                            body: self.handler.response
-
-                                        }, (err, resp, payload) => {
-
-                                            if (err) {
-
-                                                log.error('Failed to log outgoing message.', err);
-
-                                                if (callback)
-                                                    callback(new Error('Failed to log outgoing message'));
-
-                                            } else {
-
-                                                err = log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
-
-                                                if (callback)
-                                                    callback(err);
-                                            }
-                                            resolve();
-                                        });
+                                            if (callback)
+                                                callback(err);
+                                        }
+                                        resolve();
                                     });
-                                }))
+                                })
+
                                     .then(()=> {
                                         listener.apply(self, extractValues(arguments));
                                     })
