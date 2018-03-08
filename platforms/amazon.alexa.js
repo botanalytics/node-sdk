@@ -86,42 +86,32 @@ module.exports = function(token, userConfig) {
                         this.handler.removeAllListeners(':responseReady');
                         listeners.forEach(function (listener) {
                             self.handler.addListener(':responseReady', function () {
+                                request({
+                                    url: '/messages/user/amazon-alexa/',
+                                    method: 'POST',
+                                    json: true,
+                                    body: {
+                                        user:self.event,
+                                        bot:self.handler.response
+                                    }
+                                }, (err, resp, payload) => {
 
-                                return new Promise(function (resolve, reject) {
-                                    request({
-                                        url: '/messages/user/amazon-alexa/',
-                                        method: 'POST',
-                                        json: true,
-                                        body: {
-                                            user:self.event,
-                                            bot:self.handler.response
-                                        }
-                                    }, (err, resp, payload) => {
+                                    if (err) {
 
-                                        if (err) {
+                                        log.error('Failed to log incoming message.', err);
 
-                                            log.error('Failed to log incoming message.', err);
+                                        if (callback)
+                                            callback(new Error('Failed to log incoming message'));
 
-                                            if (callback)
-                                                callback(new Error('Failed to log incoming message'));
+                                    } else {
 
-                                        } else {
+                                        err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
-                                            err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-                                            if (callback)
-                                                callback(err);
-                                        }
-                                        resolve();
-                                    });
-                                })
-
-                                    .then(()=> {
-                                        listener.apply(self, extractValues(arguments));
-                                    })
-                                    .catch(() => {
-                                        listener.apply(self, extractValues(arguments));
-                                    });
+                                        if (callback)
+                                            callback(err);
+                                    }
+                                    listener.apply(self, extractValues(arguments));
+                                });
                             });
                         });
                         isAttached = true;
