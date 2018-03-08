@@ -91,8 +91,8 @@ module.exports = function(token, userConfig) {
                                     method: 'POST',
                                     json: true,
                                     body: {
-                                        user:self.event,
-                                        bot:self.handler.response
+                                        request:self.event,
+                                        response:self.handler.response
                                     }
                                 }, (err, resp, payload) => {
 
