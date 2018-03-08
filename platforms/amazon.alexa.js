@@ -87,7 +87,7 @@ module.exports = function(token, userConfig) {
                         listeners.forEach(function (listener) {
                             self.handler.addListener(':responseReady', function () {
                                 request({
-                                    url: '/messages/user/amazon-alexa/',
+                                    url: '/messages/amazon-alexa/',
                                     method: 'POST',
                                     json: true,
                                     body: {
