@@ -107,9 +107,7 @@ module.exports = function(token, userConfig) {
                 url: '/messages/amazon-lex/',
                 method: 'POST',
                 json: true,
-                body: {
-                    message: payload
-                }
+                body: payload
 
             }, (err,resp) => {
 
@@ -163,9 +161,7 @@ module.exports = function(token, userConfig) {
                     url: '/messages/amazon-lex/',
                     method: 'POST',
                     json: true,
-                    body: {
-                        message: payload
-                    }
+                    body: payload
 
                 }, (err,resp) => {
 
