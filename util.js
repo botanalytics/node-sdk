@@ -22,7 +22,9 @@ exports.Logger = function(config) {
 
 		checkResponse: (resp, successMessage, errorMessage) => {
 
-			if (resp.toJSON().statusCode == 200 || resp.toJSON().statusCode == 201) {
+		    const response = resp.toJSON();
+
+			if (response.statusCode === 200 || response.statusCode === 201) {
 
 				if (this.config.debug)
 					console.log('[Botanalytics] ' + successMessage);
@@ -30,12 +32,15 @@ exports.Logger = function(config) {
 				return null;
 			}
 
-			console.log('[Botanalytics] ' + [errorMessage, 'Response status code: ' + resp.toJSON().statusCode].join(' ').trim());
+			console.log('[Botanalytics] ' + [errorMessage, 'Response status code: ' + response.statusCode].join(' ').trim());
 
-			switch(resp.toJSON().statusCode) {
+			switch(response.statusCode) {
 
 				case 400:
-					return new Error('The request was unacceptable. This is often due to missing a required parameter.');
+				    if(response.body.error_message)
+                        return new Error(`The request was unacceptable. ERROR:${response.body.error_message}`);
+                    else
+					    return new Error('The request was unacceptable. This is often due to missing a required parameter.');
 				case 401:
 					return new Error('Your API token is invalid.');
 				case 404:
