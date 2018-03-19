@@ -86,32 +86,62 @@ module.exports = function(token, userConfig) {
                         this.handler.removeAllListeners(':responseReady');
                         listeners.forEach(function (listener) {
                             self.handler.addListener(':responseReady', function () {
-                                request({
-                                    url: '/messages/amazon-alexa/',
-                                    method: 'POST',
-                                    json: true,
-                                    body: {
-                                        request:self.event,
-                                        response:self.handler.response
-                                    }
-                                }, (err, resp, payload) => {
 
-                                    if (err) {
+                                if(typeof self.handler._callback === 'function'){
+                                    request({
+                                        url: '/messages/amazon-alexa/',
+                                        method: 'POST',
+                                        json: true,
+                                        body: {
+                                            request:self.event,
+                                            response:self.handler.response
+                                        }
+                                    }, (err, resp, payload) => {
 
-                                        log.error('Failed to log incoming message.', err);
+                                        if (err) {
 
-                                        if (callback)
-                                            callback(new Error('Failed to log incoming message'));
+                                            log.error('Failed to log incoming message.', err);
 
-                                    } else {
+                                            if (callback)
+                                                callback(new Error('Failed to log incoming message'));
 
-                                        err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+                                        } else {
 
-                                        if (callback)
-                                            callback(err);
-                                    }
+                                            err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+
+                                            if (callback)
+                                                callback(err);
+                                        }
+                                    });
                                     listener.apply(self, extractValues(arguments));
-                                });
+                                }else {
+                                    request({
+                                        url: '/messages/amazon-alexa/',
+                                        method: 'POST',
+                                        json: true,
+                                        body: {
+                                            request:self.event,
+                                            response:self.handler.response
+                                        }
+                                    }, (err, resp, payload) => {
+
+                                        if (err) {
+
+                                            log.error('Failed to log incoming message.', err);
+
+                                            if (callback)
+                                                callback(new Error('Failed to log incoming message'));
+
+                                        } else {
+
+                                            err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+
+                                            if (callback)
+                                                callback(err);
+                                        }
+                                        listener.apply(self, extractValues(arguments));
+                                    });
+                                }
                             });
                         });
                         isAttached = true;
