@@ -120,6 +120,85 @@ module.exports = function(token, userConfig) {
                 };
             }
             return proxiedObject;
+        },
+        log : function (incoming, outgoing, callback){
+
+            let isCallbackProvided = true;
+
+            if(callback && callback.constructor !== Function){
+                isCallbackProvided = false;
+                log.debug("Callback function is not provided for log.")
+            }
+
+            if(!incoming || incoming.constructor !== Object){
+                if(isCallbackProvided) {
+                    callback(new Error(`Request payload is expected as an object but found: ${incoming.constructor}`));
+                    return;
+                }
+                else
+                    return new Error(`Request payload is expected as an object but found: ${incoming.constructor}`);
+            }
+
+            if(!outgoing || outgoing.constructor !== Object){
+                if(isCallbackProvided) {
+                    callback(new Error(`Response payload is expected as an object but found: ${outgoing.constructor}`));
+                    return;
+                }
+                else
+                    return new Error(`Request payload is expected as an object but found: ${outgoing.constructor}`);
+            }
+            //request object sanity
+            if(!incoming.request){
+                if(isCallbackProvided){
+                    callback(new Error("No request field is found in incoming message."));
+                    return;
+                }
+                else
+                    return new Error("No request field is found in incoming message.");
+            }
+            if(!incoming.context){
+
+                if(isCallbackProvided){
+                    callback(new Error("No context field is found in incoming message."));
+                    return;
+                }
+                else
+                    return new Error("No context field is found in incoming message.");
+            }
+            //response object sanity
+            if(!outgoing.response) {
+                if (isCallbackProvided){
+                    callback(new Error("No response field is found in outgoing message."));
+                    return;
+                 }
+                else
+                    return new Error("No response field is found in outgoing message.");
+            }
+            request({
+                url: '/messages/amazon-alexa/',
+                method: 'POST',
+                json: true,
+                body: {
+                    request:incoming,
+                    response:outgoing
+                }
+            }, (err, resp, payload) => {
+
+                if (err) {
+
+                    log.error('Failed to log incoming message.', err);
+
+                    if (isCallbackProvided)
+                        callback(new Error('Failed to log incoming message'));
+
+                } else {
+
+                    err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+
+                    if (isCallbackProvided)
+                        callback(err);
+                }
+            });
         }
     };
 };
