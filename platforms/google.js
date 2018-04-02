@@ -81,27 +81,27 @@ module.exports = function(token, userConfig) {
 			else
 				log.error("Failed to process messages.", sanity.err);
 		},
-		attach: (Assistant, req, res, callback) => {
+		attach: (Assistant, config, callback) => {
 
-			if(!req || ! res){
+			if(!config.request || !config.response){
 				const err = new Error("Empty request or response object.");
 				log.error("Can not be attached!", err );
 				if(callback)
 					callback(err);
-				return new Assistant({request:req, response:res});
+				return new Assistant(config);
 			}
 
-			if(res.send.constructor !== Function){
+			if(config.response.send.constructor !== Function){
                 const err = new Error("Response is not an express js response object");
                 log.error("Can not be attached!", err );
                 if(callback)
                     callback(err);
-                return new Assistant({request:req, response:res});
+                return new Assistant(config);
 			}
 			// override send
-			res.originalSendFunc = res.send;
-			res.send = function (responseData) {
-				const sanity = payloadSanity(req.body, responseData);
+			config.response.originalSendFunc = config.response.send;
+			config.response.send = function (responseData) {
+				const sanity = payloadSanity(config.request.body, responseData);
 				if(sanity.ok)
                     request({
 
@@ -109,7 +109,7 @@ module.exports = function(token, userConfig) {
                         method: 'POST',
                         json: true,
                         body: {
-                            request : req.body,
+                            request : config.request.body,
                             response: responseData
                         }
 
@@ -127,8 +127,10 @@ module.exports = function(token, userConfig) {
 				else {
 					log.error('Failed to log messages', sanity.err);
 				}
-				res.originalSendFunc.apply(res, arguments);
+				config.response.originalSendFunc.apply(config.response, arguments);
             };
+
+			return new Assistant(config);
 		}
 	};
 };
