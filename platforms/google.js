@@ -12,9 +12,9 @@ const payloadSanity = function(req, res) {
     if(res.constructor !== Object)
         return {ok:false, err : new Error(`Response data is not an object : ${util.inspect(res)}`)};
     if(!req.user || !req.conversation || !req.inputs)
-        return {ok:false, err : new Error(`Request data is missing one of the required fields user, conversation, inputs : ${util.inspect(res)}`)};
+        return {ok:false, err : new Error(`Request data is missing one or more of the required fields user, conversation, inputs : ${util.inspect(res)}`)};
 	if(res.expectedInputs || res.finalResponse)
-        return {ok:false, err : new Error(`Response data is missing one of the required finalResponse or expectedInputs : ${util.inspect(req)}`)};
+        return {ok:false, err : new Error(`Response data is missing one or more of the required finalResponse or expectedInputs : ${util.inspect(req)}`)};
 	return {ok:true, err:null};
 };
 
@@ -99,8 +99,9 @@ module.exports = function(token, userConfig) {
                 return new Assistant(config);
 			}
 			// override send
-			config.response.originalSendFunc = config.response.send;
-			config.response.send = function (responseData) {
+			const temp = config.response.end;
+			config.response.end = function (responseBuff) {
+				const responseData = JSON.parse(responseBuff.toString());
 				const sanity = payloadSanity(config.request.body, responseData);
 				if(sanity.ok)
                     request({
@@ -127,7 +128,7 @@ module.exports = function(token, userConfig) {
 				else {
 					log.error('Failed to log messages', sanity.err);
 				}
-				config.response.originalSendFunc.apply(config.response, arguments);
+				temp.apply(this, arguments);
             };
 
 			return new Assistant(config);
