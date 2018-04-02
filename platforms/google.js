@@ -13,7 +13,7 @@ const payloadSanity = function(req, res) {
         return {ok:false, err : new Error(`Response data is not an object : ${util.inspect(res)}`)};
     if(!req.user || !req.conversation || !req.inputs)
         return {ok:false, err : new Error(`Request data is missing one or more of the required fields user, conversation, inputs : ${util.inspect(res)}`)};
-	if(res.expectedInputs || res.finalResponse)
+	if(!(res.expectedInputs || res.finalResponse))
         return {ok:false, err : new Error(`Response data is missing one or more of the required finalResponse or expectedInputs : ${util.inspect(req)}`)};
 	return {ok:true, err:null};
 };
