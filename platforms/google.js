@@ -1,5 +1,22 @@
+'use strict';
 const util = require('util');
-const objectPath = require('object-path');
+
+const payloadSanity = function(req, res) {
+
+	if(!req)
+		return {ok:false, err : new Error(`No request data: ${util.inspect(req)}`)};
+	if(!res)
+        return {ok:false, err : new Error(`No response data: ${util.inspect(res)}`)};
+    if(req.constructor !== Object)
+        return {ok:false, err : new Error(`Request data is not an object : ${util.inspect(req)}`)};
+    if(res.constructor !== Object)
+        return {ok:false, err : new Error(`Response data is not an object : ${util.inspect(res)}`)};
+    if(!req.user || !req.conversation || !req.inputs)
+        return {ok:false, err : new Error(`Request data is missing one of the required fields user, conversation, inputs : ${util.inspect(res)}`)};
+	if(res.expectedInputs || res.finalResponse)
+        return {ok:false, err : new Error(`Response data is missing one of the required finalResponse or expectedInputs : ${util.inspect(req)}`)};
+	return {ok:true, err:null};
+};
 
 module.exports = function(token, userConfig) {
 
@@ -10,10 +27,10 @@ module.exports = function(token, userConfig) {
 	}
 
 	// Create default config
-	var config = {
+	const config = {
 		baseUrl: 'https://api.botanalytics.co/v1/',
 		debug: false
-	}
+	};
 
 	// Merge user configuration into the default config
 	Object.assign(config, userConfig);
@@ -33,163 +50,85 @@ module.exports = function(token, userConfig) {
 		}
 	});
 
-	const isHealthCheck = (data) => {
-
-		var inputArray = objectPath.get(data, 'originalRequest.data.inputs');
-
-		if (!inputArray || !inputArray.length)
-			return false;
-
-		for (var i = 0; i < inputArray.length; i++) {
-
-			var inputObj = inputArray[i];
-
-			var argumentArray = objectPath.get(inputObj, 'arguments');
-
-			if (!argumentArray || !argumentArray.length)
-				return false;
-
-			for (var j = 0; j < argumentArray.length; j++) {
-
-				var argumentObj = argumentArray[j];
-
-				if (objectPath.get(argumentObj, 'name') === 'is_health_check' && objectPath.get(argumentObj, 'text_value') === '1')
-					return true;
-			}
-		}
-
-		return false;
-	}
-
-	const logIncomingMessage_ = (data, callback) => {
-
-		log.debug('Logging incoming message: ' + util.inspect(data));
-
-		if (isHealthCheck(data)) {
-
-			log.debug('Ignoring health check...');
-
-			return;
-		}
-
-		// Add timestamp to the data object
-		objectPath.set(data, 'timestamp', new Date().getTime());
-
-		request({
-
-			url: '/messages/user/google-assistant/',
-			method: 'POST',
-			json: true,
-			body: {
-				message: data
-			}
-
-		}, (err, resp, payload) => {
-
-			if (err) {
-
-				log.error('Failed to log user message.', err);
-
-				if (callback)
-					callback(new Error('Failed to log user message'));
-
-				return;
-			}
-
-			err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-			if (callback)
-				callback(err);
-		});
-	};
-
-	const logOutgoingMessage_ = (requestData, responseData, callback) => {
-
-		var userId, conversationId;
-
-		// Check if data has originalRequest property and fill the extract information
-		if (objectPath.has(requestData, 'originalRequest')) {
-
-			userId = objectPath.get(requestData, 'originalRequest.data.user.user_id');
-			conversationId = objectPath.get(requestData, 'originalRequest.data.conversation.conversationId');
-
-		} else {
-
-			userId = objectPath.get(requestData, 'user.user_id');
-			conversationId = objectPath.get(requestData, 'conversation.conversation_id');
-		}
-
-		log.debug('Logging incoming message: ' + util.inspect(responseData));
-
-		// Add timestamp to the data object
-		objectPath.set(responseData, 'timestamp', new Date().getTime());
-
-		request({
-
-			url: '/messages/bot/google-assistant/',
-			method: 'POST',
-			json: true,
-			body: {
-				message: responseData,
-				user: {
-					user_id: userId
-				},
-				conversation: {
-					conversation_id: conversationId
-				}
-			}
-
-		}, (err, resp, payload) => {
-
-			if (err) {
-
-				log.error('Failed to log user message.', err);
-
-				if (callback)
-					callback(new Error('Failed to log user message'));
-
-				return;
-			}
-
-			err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-			if (callback)
-				callback(err);
-		});
-	};
 
 	return {
+		log : (req, res) => {
+			//check sanity
+			const sanity = payloadSanity(req, res);
+			//process
+			if(sanity.ok)
 
-		logIncomingMessage: logIncomingMessage_,
+				request({
 
-		logOutgoingMessage: logIncomingMessage_,
+					url: '/messages/google-assistant/',
+					method: 'POST',
+					json: true,
+					body: {
+						request : req,
+						response: res
+					}
 
-		attach: (assistant, callback) => {
+				}, (err, resp, payload) => {
 
-			// Check assistant object
-			if (!assistant) {
+					if (err) {
 
-				var err = new Error('You must provide an assistant object!');
+						log.error('Failed to log message.', err);
+						return;
+					}
+					err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+					log.error("Failed to log message", err);
+				});
+			else
+				log.error("Failed to process messages.", sanity.err);
+		},
+		attach: (Assistant, req, res, callback) => {
 
-				if (callback)
-					return callback(err);
-				else
-					return err;
+			if(!req || ! res){
+				const err = new Error("Empty request or response object.");
+				log.error("Can not be attached!", err );
+				if(callback)
+					callback(err);
+				return new Assistant({request:req, response:res});
 			}
 
-			this.assistantRef = assistant;
-
-			this.assistantRef.originalDoResponse = assistant.doResponse_;
-			this.assistantRef.doResponse_ = (responseData, responseCode) => {
-
-				logOutgoingMessage_(this.requestData, responseData, callback);
-
-				this.assistantRef.originalDoResponse(responseData, responseCode);
+			if(res.send.constructor !== Function){
+                const err = new Error("Response is not an express js response object");
+                log.error("Can not be attached!", err );
+                if(callback)
+                    callback(err);
+                return new Assistant({request:req, response:res});
 			}
+			// override send
+			res.originalSendFunc = res.send;
+			res.send = function (responseData) {
+				const sanity = payloadSanity(req.body, responseData);
+				if(sanity.ok)
+                    request({
 
-			this.requestData = assistant.body_;
+                        url: '/messages/google-assistant/',
+                        method: 'POST',
+                        json: true,
+                        body: {
+                            request : req.body,
+                            response: responseData
+                        }
 
-			logIncomingMessage_(assistant.body_, callback);
+                    }, (err, resp, payload) => {
+
+                        if (err) {
+
+                            log.error('Failed to log message.', err);
+                            return;
+                        }
+
+                        err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+						log.error('Failed to log messages.', err);
+                    });
+				else {
+					log.error('Failed to log messages', sanity.err);
+				}
+				res.originalSendFunc.apply(res, arguments);
+            };
 		}
 	};
-}
+};
