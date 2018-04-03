@@ -75,9 +75,11 @@ module.exports = function(token, userConfig) {
 						log.error('Failed to log message.', err);
 						return;
 					}
-					err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-					log.error("Failed to log message", err);
-				});
+
+					err = log.checkResponse(resp, 'Successfully logged messages.', 'Failed to log messages.');
+					if(err)
+                        log.error("Failed to log message", err);
+                });
 			else
 				log.error("Failed to process messages.", sanity.err);
 		},
@@ -121,8 +123,10 @@ module.exports = function(token, userConfig) {
                             return;
                         }
 
-                        err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-						log.error('Failed to log messages.', err);
+                        err = log.checkResponse(resp, 'Successfully logged messages.', 'Failed to log messages.');
+
+                        if(err)
+							log.error('Failed to log messages.', err);
                     });
 				else {
 					log.error('Failed to log messages', sanity.err);

@@ -33,21 +33,20 @@ exports.Logger = function(config) {
 			}
 
 			console.log('[Botanalytics] ' + [errorMessage, 'Response status code: ' + response.statusCode].join(' ').trim());
+            let errorString = response.body && response.body.error_message ? response.body.error_message : response.body;
+            switch(response.statusCode) {
 
-			switch(response.statusCode) {
-
-				case 400:
-				    if(response.body.error_message)
-                        return new Error(`The request was unacceptable. ERROR:${response.body.error_message}`);
-                    else
-					    return new Error('The request was unacceptable. This is often due to missing a required parameter.');
-				case 401:
-					return new Error('Your API token is invalid.');
-				case 404:
-					return new Error('Requested resource does not exist. Please check your \'baseUrl\' configuration.');
-				default:
-					return new Error('Something went wrong on Botanalytics\'s end. Try again later.');
-			}
+                case 400:
+                    return new Error(`The request was unacceptable. This is often due to missing a required parameter. ERROR:${errorString}`);
+                case 401:
+                    return new Error('Your API token is invalid.');
+                case 404:
+                    return new Error('Requested resource does not exist. Please check your \'baseUrl\' configuration.');
+                case 406:
+                    return new Error(`The request was unacceptable. This is often due to missing a required parameter. ERROR:${errorString}`);
+                default:
+                    return new Error('Something went wrong on Botanalytics\'s end. Try again later.');
+            }
 		}
 	}	
 };
