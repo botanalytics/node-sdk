@@ -103,7 +103,12 @@ module.exports = function(token, userConfig) {
 			// override send
 			const temp = config.response.end;
 			config.response.end = function (responseBuff) {
-				const responseData = JSON.parse(responseBuff.toString());
+				let responseData;
+				try{
+                    responseData = JSON.parse(responseBuff.toString());
+                }catch (e) {
+					log.error("Response can not be parsed.", e);
+                }
 				const sanity = payloadSanity(config.request.body, responseData);
 				if(sanity.ok)
                     request({
