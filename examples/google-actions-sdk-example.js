@@ -14,9 +14,9 @@
 'use strict';
 
 process.env.DEBUG = 'actions-on-google:*';
-const Assistant = require('actions-on-google').ActionsSdkAssistant;
+const Assistant = require('actions-on-google').ActionsSdkApp;
 
-const Botanalytics = require('botanalytics').GoogleAssistant(process.env.BOTANALYTICS_TOKEN);
+const Botanalytics = require('botanalytics').GoogleAssistant(process.env.BOTANALYTICS_TOKEN,{debug:true});
 
 const NAME_ACTION = 'make_name';
 const COLOR_ARGUMENT = 'color';
@@ -24,12 +24,10 @@ const NUMBER_ARGUMENT = 'number';
 
 // [START SillyNameMaker]
 exports.sillyNameMaker = (req, res) => {
-  const assistant = new Assistant({request: req, response: res});
+  //attach and get assistantApp
+  const assistant = Botanalytics.attach(Assistant, {request: req, response: res}, console.err);
   console.log('Request headers: ' + JSON.stringify(req.headers));
   console.log('Request body: ' + JSON.stringify(req.body));
-
-  
-  Botanalytics.attach(assistant);
 
   // Make a silly name
   function makeName (assistant) {
