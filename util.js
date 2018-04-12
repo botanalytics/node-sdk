@@ -89,7 +89,7 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
                 'Authorization': 'Token '+encodeURIComponent(self._botanalyticsToken),
                 'Content-Type': 'application/json'
             },
-            body: JSON.parse(data)
+            body: data
 
 
         }, (err, resp, payload) => {
@@ -110,10 +110,11 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
         // check rtm start
         require("request").post({url : "https://slack.com/api/rtm.start", form : {token : self._slackBotToken}}, function (err, resp, body) {
 
-            if(err || JSON.parse(body).ok === false)
+            const data = JSON.parse(body);
+            if(err || data.ok === false)
                 setTimeout(self.fetch.bind(self), 10000);
             else{
-                self._init(body);
+                self._init(data);
             	if(self._config.debug)
             		console.log(`Fetched team info for ${self._slackBotToken}`);
 			}

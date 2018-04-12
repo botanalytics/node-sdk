@@ -92,10 +92,10 @@ module.exports = function(token, userConfig) {
             this.rtmRef.originalSendTyping = rtm.sendTyping;
 
             this.rtmRef.sendTyping = function (channelId) {
-                log.debug("Sending 'bot_typing' message to channel:"+channelId);
+                log.debug("Sending 'typing' message to channel:"+channelId);
                 this.originalSendTyping(channelId);
                 const payload = {
-                    type: "bot_typing",
+                    type: "typing",
                     text: "",
                     channel : channelId,
                     user : this.activeUserId,
