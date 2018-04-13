@@ -100,16 +100,13 @@ module.exports = function(token, userConfig) {
                     callback(err);
                 return new Assistant(config);
 			}
-			// override send
-			const temp = config.response.end;
-			config.response.end = function (responseBuff) {
-				let responseData;
-				try{
-                    responseData = JSON.parse(responseBuff.toString());
-                }catch (e) {
-					log.error("Response can not be parsed.", e);
-                }
-				const sanity = payloadSanity(config.request.body, responseData);
+
+			this.assistant = new Assistant(config);
+			this.assistant.originalDoResponse = this.assistant.doResponse_;
+			this.requestData = this.assistant.body_;
+			this.assistant.doResponse_ = function (responseData, responseCode) {
+
+                const sanity = payloadSanity(this.assistant.body_, responseData);
 				if(sanity.ok)
                     request({
 
@@ -117,7 +114,7 @@ module.exports = function(token, userConfig) {
                         method: 'POST',
                         json: true,
                         body: {
-                            request : config.request.body,
+                            request : this.requestData,
                             response: responseData
                         }
 
@@ -132,12 +129,13 @@ module.exports = function(token, userConfig) {
                         err = log.checkResponse(resp, 'Successfully logged messages.', 'Failed to log messages.');
 
                         if(err)
-							log.error('Failed to log messages.', err);
+                            log.error('Failed to log messages.', err);
                     });
-				else {
-					log.error('Failed to log messages', sanity.err);
-				}
-				temp.apply(this, arguments);
+                else
+                    log.error('Failed to log messages', sanity.err);
+
+                this.assistant.originalDoResponse(responseData, responseCode);
+
             };
 
 			return new Assistant(config);
