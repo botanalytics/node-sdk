@@ -128,8 +128,6 @@ module.exports = function(token, userConfig) {
                 assistant.originalDoResponse(responseData, responseCode);
 
             };
-
-            return assistant;
         }
     };
 };

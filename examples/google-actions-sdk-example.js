@@ -14,7 +14,7 @@
 'use strict';
 
 process.env.DEBUG = 'actions-on-google:*';
-const Assistant = require('actions-on-google').ActionsSdkApp;
+const ActionSdkApp = require('actions-on-google').ActionsSdkApp;
 
 const Botanalytics = require('botanalytics').GoogleAssistant(process.env.BOTANALYTICS_TOKEN,{debug:true});
 
@@ -25,7 +25,8 @@ const NUMBER_ARGUMENT = 'number';
 // [START SillyNameMaker]
 exports.sillyNameMaker = (req, res) => {
   //attach and get assistantApp
-  const assistant = Botanalytics.attach(Assistant, {request: req, response: res}, console.err);
+  const assistant = new ActionSdkApp({request: req, response: res});
+  Botanalytics.attach(assistant, console.err);
   console.log('Request headers: ' + JSON.stringify(req.headers));
   console.log('Request body: ' + JSON.stringify(req.body));
 

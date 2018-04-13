@@ -25,12 +25,8 @@ const NUMBER_ARGUMENT = 'number';
 //[START SillyNameMaker]
 exports.sillyNameMaker = functions.https.onRequest((req, res) => {
   //attach and get assistantApp
-  const assistant = Botanalytics.attach(DialogflowApp, {request: req, response: res}, console.err);  console.log('Request headers: ' + JSON.stringify(req.headers));
-  console.log('Request body: ' + JSON.stringify(req.body));
-
-  
-  Botanalytics.attach(assistant);
-
+  const assistant = new DialogflowApp({request: req, response: res});
+  Botanalytics.attach(assistant,console.err);
   // Make a silly name
   function makeName (assistant) {
     let number = assistant.getArgument(NUMBER_ARGUMENT);
