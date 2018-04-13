@@ -83,9 +83,8 @@ module.exports = function(token, userConfig) {
             else
                 log.error("Failed to process messages.", sanity.err);
         },
-        attach: (Assistant, callback) => {
+        attach: (assistant, callback) => {
 
-            const assistant = new Assistant(config);
             assistant.originalDoResponse = assistant.doResponse_;
             assistant.doResponse_ = function (responseData, responseCode) {
 
