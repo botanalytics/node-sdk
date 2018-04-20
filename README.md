@@ -10,7 +10,7 @@ Currently we support
 * [Kik](http://docs.botanalytics.apiary.io/)
 * [Microsoft Bot Framework](http://docs.botanalytics.apiary.io/)
 
-If you want to use nodejs instead, checkout [Botanalytics Ruby SDK](https://github.com/Botanalyticsco/botanalytics-ruby)
+If you want to use ruby instead, checkout [Botanalytics Ruby SDK](https://github.com/Botanalyticsco/botanalytics-ruby)
 
 If you want to use python instead, checkout [Botanalytics Python SDK](https://github.com/Botanalyticsco/botanalytics-python)
 
