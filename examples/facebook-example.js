@@ -104,7 +104,7 @@ function receivedMessage(event) {
 }
 
 function sendTextMessage(sender, text) {
-    messageData = {
+    var messageData = {
         text:text
     }
 
