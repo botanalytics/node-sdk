@@ -1,6 +1,6 @@
 {
   "name": "botanalytics",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
   "author": "Enis Gayretli",
