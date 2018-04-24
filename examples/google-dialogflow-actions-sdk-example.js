@@ -14,23 +14,19 @@
 'use strict';
 
 process.env.DEBUG = 'actions-on-google:*';
-const Assistant = require('actions-on-google').ApiAiAssistant;
-
+const { DialogflowApp } = require('actions-on-google');
+const functions = require('firebase-functions');
 const Botanalytics = require('botanalytics').GoogleAssistant(process.env.BOTANALYTICS_TOKEN);
 
 const NAME_ACTION = 'make_name';
 const COLOR_ARGUMENT = 'color';
 const NUMBER_ARGUMENT = 'number';
 
-// [START SillyNameMaker]
-exports.sillyNameMaker = (req, res) => {
-  const assistant = new Assistant({request: req, response: res});
-  console.log('Request headers: ' + JSON.stringify(req.headers));
-  console.log('Request body: ' + JSON.stringify(req.body));
-
-  
-  Botanalytics.attach(assistant);
-
+//[START SillyNameMaker]
+exports.sillyNameMaker = functions.https.onRequest((req, res) => {
+  //attach and get assistantApp
+  const assistant = new DialogflowApp({request: req, response: res});
+  Botanalytics.attach(assistant,console.err);
   // Make a silly name
   function makeName (assistant) {
     let number = assistant.getArgument(NUMBER_ARGUMENT);

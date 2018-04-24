@@ -98,14 +98,11 @@ var languageStrings = {
 };
 
 exports.handler = function(event, context, callback) {
-    var alexa = Alexa.handler(event, context);
+    var alexa = Alexa.handler(event, context, callback);
     alexa.APP_ID = APP_ID;
     // To enable string internationalization (i18n) features, set a resources object.
     alexa.resources = languageStrings;
-    alexa.registerHandlers(Botanalytics.attach(handlers, (err) => {
-
-        console.log('Error: ' + err);
-    }));
+    alexa.registerHandlers(Botanalytics.attach(handlers,/*Any callback you want*/console.err));
     alexa.execute();
 };
 
