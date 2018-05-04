@@ -25,4 +25,4 @@ Botanalytics is available via NPM.
 npm install botanalytics
 ```
 
-Follow the instructions at [http://docs.botanalytics.apiary.io/](https://botanalytics.co/docs)
+Follow the instructions at [https://botanalytics.co/docs](https://botanalytics.co/docs)
