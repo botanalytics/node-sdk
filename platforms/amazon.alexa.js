@@ -72,6 +72,7 @@ module.exports = function(token, userConfig) {
                                     log.error('', err);
                             }
                         });
+                        return response;
                     });
             };
         },
