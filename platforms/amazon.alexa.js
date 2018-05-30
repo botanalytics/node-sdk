@@ -50,29 +50,31 @@ module.exports = function(token, userConfig) {
             return function (event, context, callback) {
                 return originalHandler(event, context, callback)
                     .then(function (response) {
-                        request({
-                            url: '/messages/amazon-alexa/',
-                            method: 'POST',
-                            json: true,
-                            body: {
-                                request:event,
-                                response:response
-                            }
-                        }, (err, resp, payload) => {
+                        return new Promise(function (resolve, reject) {
+                            request({
+                                url: '/messages/amazon-alexa/',
+                                method: 'POST',
+                                json: true,
+                                body: {
+                                    request:event,
+                                    response:response
+                                }
+                            }, (err, resp, payload) => {
 
-                            if (err) {
+                                if (err) {
 
-                                log.error('Failed to log incoming message.', err);
+                                    log.error('Failed to log incoming message.', err);
 
-                            } else {
+                                } else {
 
-                                err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+                                    err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
-                                if (err)
-                                    log.error('', err);
-                            }
+                                    if (err)
+                                        log.error('', err);
+                                }
+                                resolve(response);
+                            });
                         });
-                        return response;
                     });
             };
         },
