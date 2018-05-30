@@ -85,48 +85,49 @@ module.exports = function(token, userConfig) {
         },
         attach: (assistant, callback) => {
 
-            assistant.originalDoResponse = assistant.doResponse_;
-            assistant.doResponse_ = function (responseData, responseCode) {
+            assistant.originalHandler = assistant.handler;
+            assistant.handler = function (r, h) {
+                return assistant
+                    .originalHandler(r, h)
+                    .then((response) => {
 
-                const sanity = payloadSanity(assistant.body_, responseData);
+                        const sanity = payloadSanity(r, response.body);
 
-                if(sanity.ok)
-                    request({
+                        if(sanity.ok)
+                            request({
+                                url: '/messages/google-assistant/',
+                                method: 'POST',
+                                json: true,
+                                body: {
+                                    request : r,
+                                    response: response.body
+                                }
 
-                        url: '/messages/google-assistant/',
-                        method: 'POST',
-                        json: true,
-                        body: {
-                            request : assistant.body_,
-                            response: responseData
-                        }
+                            }, (err, resp, payload) => {
 
-                    }, (err, resp, payload) => {
+                                if (err) {
 
-                        if (err) {
+                                    log.debug(`Failed to log message. Reason: ${err.message}`);
+                                    if(callback)
+                                        callback(err);
+                                    return;
+                                }
 
-                            log.debug(`Failed to log message. Reason: ${err.message}`);
+                                err = log.checkResponse(resp, 'Successfully logged messages.', 'Failed to log messages.');
+
+                                if(err){
+                                    log.debug(`Failed to log message. Reason: ${err.message}`);
+                                    if (callback)
+                                        callback(err)
+                                }
+                            });
+                        else{
+                            log.error(`Failed to log messages. Reason: ${sanity.err.message}`);
                             if(callback)
-                            	callback(err);
-                            return;
+                                callback(sanity.err)
                         }
-
-                        err = log.checkResponse(resp, 'Successfully logged messages.', 'Failed to log messages.');
-
-                        if(err){
-                            log.debug(`Failed to log message. Reason: ${err.message}`);
-							if (callback)
-								callback(err)
-                        }
-                    });
-                else{
-                    log.error(`Failed to log messages. Reason: ${sanity.err.message}`);
-                    if(callback)
-                    	callback(sanity.err)
-                }
-
-                assistant.originalDoResponse(responseData, responseCode);
-
+                        return response;
+                    })
             };
         }
     };
