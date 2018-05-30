@@ -48,8 +48,34 @@ module.exports = function(token, userConfig) {
 
         handler: function(originalHandler) {
             return function (event, context, callback) {
-                return originalHandler(event, context, callback)
-                    .then(function (response) {
+                const wrappedCallback = function (err, response) {
+                    request({
+                        url: '/messages/amazon-alexa/',
+                        method: 'POST',
+                        json: true,
+                        body: {
+                            request:event,
+                            response:response
+                        }
+                    }, (err, resp, payload) => {
+
+                        if (err) {
+
+                            log.error('Failed to log incoming message.', err);
+
+                        } else {
+
+                            err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+
+                            if (err)
+                                log.error('', err);
+                        }
+                    });
+                    callback(err, response);
+                };
+                const promise = originalHandler(event, context, wrappedCallback);
+                if(promise && promise instanceof Promise){
+                    return promise.then(function (response) {
                         return new Promise(function (resolve, reject) {
                             request({
                                 url: '/messages/amazon-alexa/',
@@ -76,6 +102,7 @@ module.exports = function(token, userConfig) {
                             });
                         });
                     });
+                }
             };
         },
         log : function (incoming, outgoing, callback){
