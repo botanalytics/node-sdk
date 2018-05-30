@@ -46,110 +46,34 @@ module.exports = function(token, userConfig) {
 
     return {
 
-        attach: function(handlerObject, callback) {
+        handler: function(originalHandler) {
+            return function (event, context, callback) {
+                return originalHandler(event, context, callback)
+                    .then(function (response) {
+                        request({
+                            url: '/messages/amazon-alexa/',
+                            method: 'POST',
+                            json: true,
+                            body: {
+                                request:event,
+                                response:response
+                            }
+                        }, (err, resp, payload) => {
 
-            // Check handler object
-            if (!handlerObject || handlerObject.constructor !== Object) {
-                if (callback)
-                    return callback(new Error('You must provide a handler object!'));
-                return new Error('You must provide a handler object!');
-            }
+                            if (err) {
 
-            log.debug('Attaching to handler object...');
+                                log.error('Failed to log incoming message.', err);
 
-            let isAttached = false;
+                            } else {
 
-            const eventNames = Object.keys(handlerObject);
+                                err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
-            const proxiedObject = {};
-
-            for (let i = 0; i < eventNames.length; i++) {
-
-                if(typeof(handlerObject[eventNames[i]]) !== 'function') {
-
-                    if (callback)
-                        callback(new Error(`Event handler for '${eventNames[i]}' was not a function.`));
-
-                    return handlerObject; // We need to return the original handler object to avoid breaking the bot
-                }
-
-                proxiedObject[eventNames[i]] = function() {
-
-                    const self = this;
-                    log.debug(`Invoking event ${self.name}...`);
-                    const originalArgs = extractValues(arguments);
-                    const originalFunc = handlerObject[self.name];
-
-                    if(!isAttached){
-
-                        const listeners = this.handler.listeners(':responseReady');
-                        this.handler.removeAllListeners(':responseReady');
-                        listeners.forEach(function (listener) {
-                            self.handler.addListener(':responseReady', function () {
-
-                                if(typeof self.handler._callback === 'function'){
-                                    request({
-                                        url: '/messages/amazon-alexa/',
-                                        method: 'POST',
-                                        json: true,
-                                        body: {
-                                            request:self.event,
-                                            response:self.handler.response
-                                        }
-                                    }, (err, resp, payload) => {
-
-                                        if (err) {
-
-                                            log.error('Failed to log incoming message.', err);
-
-                                            if (callback)
-                                                callback(new Error('Failed to log incoming message'));
-
-                                        } else {
-
-                                            err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-                                            if (callback)
-                                                callback(err);
-                                        }
-                                    });
-                                    listener.apply(self, extractValues(arguments));
-                                }else {
-                                    request({
-                                        url: '/messages/amazon-alexa/',
-                                        method: 'POST',
-                                        json: true,
-                                        body: {
-                                            request:self.event,
-                                            response:self.handler.response
-                                        }
-                                    }, (err, resp, payload) => {
-
-                                        if (err) {
-
-                                            log.error('Failed to log incoming message.', err);
-
-                                            if (callback)
-                                                callback(new Error('Failed to log incoming message'));
-
-                                        } else {
-
-                                            err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
-
-                                            if (callback)
-                                                callback(err);
-                                        }
-                                        listener.apply(self, extractValues(arguments));
-                                    });
-                                }
-                            });
+                                if (err)
+                                    log.error('', err);
+                            }
                         });
-                        isAttached = true;
-                    }
-                    originalFunc.apply(self, originalArgs);
-                };
-            }
-            return proxiedObject;
+                    });
+            };
         },
         log : function (incoming, outgoing, callback){
 
