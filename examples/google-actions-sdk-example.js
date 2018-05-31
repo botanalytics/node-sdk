@@ -1,47 +1,42 @@
+'use strict';
+
 // Copyright 2016, Google, Inc.
-// Licensed under the Apache License, Version 2.0 (the 'License');
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//    http://www.apache.org/licenses/LICENSE-2.0
+//   http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
+// distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
 'use strict';
 
-process.env.DEBUG = 'actions-on-google:*';
-const ActionSdkApp = require('actions-on-google').ActionsSdkApp;
-
+const functions = require('firebase-functions');
+const {actionssdk} = require('actions-on-google');
 const Botanalytics = require('botanalytics').GoogleAssistant(process.env.BOTANALYTICS_TOKEN,{debug:true});
 
-const NAME_ACTION = 'make_name';
-const COLOR_ARGUMENT = 'color';
-const NUMBER_ARGUMENT = 'number';
+//Original sample https://github.com/actions-on-google/actionssdk-say-number-nodejs
 
-// [START SillyNameMaker]
-exports.sillyNameMaker = (req, res) => {
-  //attach and get assistantApp
-  const assistant = new ActionSdkApp({request: req, response: res});
-  Botanalytics.attach(assistant, console.err);
-  console.log('Request headers: ' + JSON.stringify(req.headers));
-  console.log('Request body: ' + JSON.stringify(req.body));
+const app = actionssdk({debug: true});
 
-  // Make a silly name
-  function makeName (assistant) {
-    let number = assistant.getArgument(NUMBER_ARGUMENT);
-    let color = assistant.getArgument(COLOR_ARGUMENT);
-    assistant.tell('Alright, your silly name is ' +
-      color + ' ' + number +
-      '! I hope you like it. See you next time.');
-  }
+app.intent('actions.intent.MAIN', (conv) => {
+    conv.ask('<speak>Hi! <break time="1"/> ' +
+        'I can read out an ordinal like ' +
+        '<say-as interpret-as="ordinal">123</say-as>. Say a number.</speak>');
+});
 
-  let actionMap = new Map();
-  actionMap.set(NAME_ACTION, makeName);
-
-  assistant.handleRequest(actionMap);
-};
-// [END SillyNameMaker]
+app.intent('actions.intent.TEXT', (conv, input) => {
+    if (input === 'bye') {
+        return conv.close('Goodbye!');
+    }
+    conv.ask('<speak>You said, ' +
+        `<say-as interpret-as="ordinal">${input}</say-as></speak>`);
+});
+//Attach Botanalytics and we are done
+Botanalytics.attach(app);
+exports.sayNumber = functions.https.onRequest(app);

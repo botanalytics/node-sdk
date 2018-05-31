@@ -13,32 +13,17 @@
 
 'use strict';
 
-process.env.DEBUG = 'actions-on-google:*';
-const { DialogflowApp } = require('actions-on-google');
+const {dialogflow} = require('actions-on-google');
 const functions = require('firebase-functions');
 const Botanalytics = require('botanalytics').GoogleAssistant(process.env.BOTANALYTICS_TOKEN);
 
-const NAME_ACTION = 'make_name';
-const COLOR_ARGUMENT = 'color';
-const NUMBER_ARGUMENT = 'number';
+//Original sample https://github.com/actions-on-google/dialogflow-silly-name-maker-webhook-nodejs
+const app = dialogflow({debug: true});
 
-//[START SillyNameMaker]
-exports.sillyNameMaker = functions.https.onRequest((req, res) => {
-  //attach and get assistantApp
-  const assistant = new DialogflowApp({request: req, response: res});
-  Botanalytics.attach(assistant,console.err);
-  // Make a silly name
-  function makeName (assistant) {
-    let number = assistant.getArgument(NUMBER_ARGUMENT);
-    let color = assistant.getArgument(COLOR_ARGUMENT);
-    assistant.tell('Alright, your silly name is ' +
-      color + ' ' + number +
-      '! I hope you like it. See you next time.');
-  }
-
-  let actionMap = new Map();
-  actionMap.set(NAME_ACTION, makeName);
-
-  assistant.handleRequest(actionMap);
-};
-// [END SillyNameMaker]
+app.intent('make_name', (conv, {color, number}) => {
+    conv.close(`Alright, your silly name is ${color} ${number}! ` +
+        `I hope you like it. See you next time.`);
+});
+// Attach Botanalytics
+Botanalytics.attach(app);
+exports.sillyNameMaker = functions.https.onRequest(app);
