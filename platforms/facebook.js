@@ -9,10 +9,10 @@ module.exports = function(token, userConfig) {
 	}
 
 	// Create default config
-	var config = {
+	const config = {
 		baseUrl: 'https://api.botanalytics.co/v1/',
 		debug: false
-	}
+	};
 
 	// Merge user configuration into the default config
 	Object.assign(config, userConfig);
@@ -21,7 +21,7 @@ module.exports = function(token, userConfig) {
 
 	log.debug('Logging enabled.');
 
-	log.debug('Configuration: ' + util.inspect(config))
+	log.debug('Configuration: ' + util.inspect(config));
 
 	// Configure request defaults
 	const request = require('request').defaults({
@@ -42,7 +42,7 @@ module.exports = function(token, userConfig) {
 
 				log.error('Message data is required.');
 
-				var err = new Error('Message data is required.');
+				const err = new Error('Message data is required.');
 
 				if (callback)
 					return callback(err);
@@ -52,7 +52,7 @@ module.exports = function(token, userConfig) {
 
 			request({
 
-				url: '/messages/facebook-messenger',
+				url: '/messages/facebook-messenger/',
 				method: 'POST',
 				json: true,
 				body: {
@@ -92,7 +92,7 @@ module.exports = function(token, userConfig) {
 
 				log.error('Message data is required.');
 
-				var err = new Error('Message data is required.');
+				const err = new Error('Message data is required.');
 
 				if (callback)
 					return callback(err);
@@ -104,7 +104,7 @@ module.exports = function(token, userConfig) {
 
 				log.error('Message recipient is required.');
 
-				var err = new Error('Message recipient is required.');
+				const err = new Error('Message recipient is required.');
 
 				if (callback)
 					return callback(err);
@@ -114,7 +114,7 @@ module.exports = function(token, userConfig) {
 
 			request({
 
-				url: '/messages/facebook-messenger',
+				url: '/messages/facebook-messenger/',
 				method: 'POST',
 				json: true,
 				body: {
@@ -155,7 +155,7 @@ module.exports = function(token, userConfig) {
 
 				log.error('User profile data is required.');
 
-				var err = new Error('User profile data is required.');
+				const err = new Error('User profile data is required.');
 
 				if (callback)
 					return callback(err);
@@ -165,7 +165,7 @@ module.exports = function(token, userConfig) {
 
 			request({
 
-				url: '/facebook-messenger/users',
+				url: '/facebook-messenger/users/',
 				method: 'POST',
 				json: true,
 				body: data
