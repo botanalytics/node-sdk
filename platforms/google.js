@@ -33,6 +33,7 @@ const payloadSanityDialogflow = function(req, res){
         return {ok:false, err: new Error(`Field <payload.google> is required in response object: ${JSON.stringify(res)} but not found.`)};
     if(!req.originalDetectIntentRequest || !req.queryResult)
         return {ok:false, err: new Error(`Fields, <originalDetectIntentRequest> and <queryResult> are required in request object: ${JSON.stringify(req)} but not found.`)};
+    return {ok:true, err:null};
 };
 const isDialogflow = function(req){
   if(req.originalDetectIntentRequest && req.queryResult)
