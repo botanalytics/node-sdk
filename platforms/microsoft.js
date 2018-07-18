@@ -7,10 +7,10 @@ module.exports = function(token, userConfig) {
   }
 
   // Create default config
-  var config = {
+  let config = {
     baseUrl: 'https://api.botanalytics.co/v1/',
     debug: false
-  }
+  };
 
   // Merge user configuration into the default config
   Object.assign(config, userConfig);
@@ -19,7 +19,7 @@ module.exports = function(token, userConfig) {
 
   log.debug('Logging enabled.');
 
-  log.debug('Configuration: ' + util.inspect(config))
+  log.debug('Configuration: ' + require('util').inspect(config));
 
   // Configure request defaults
   const request = require('request').defaults({
@@ -104,4 +104,4 @@ module.exports = function(token, userConfig) {
       })
     }
   };
-}
+};
