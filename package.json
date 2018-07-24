@@ -1,9 +1,16 @@
 {
   "name": "botanalytics",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
-  "author": "Enis Gayretli",
+  "author": "Botanalytics",
+  "contributors": [{
+    "name": "Enis Gayretli",
+    "email": "enis@botanalytics.co"
+  }, {
+    "name": "Beyhan Esen",
+    "email": "beyhan@botanalytics.co"
+  }],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,7 +34,9 @@
     "ibm watson",
     "botkit",
     "voice analytics",
-    "google actions"
+    "google actions",
+    "microsoft bot framework",
+    "slack"
   ],
   "dependencies": {
     "object-path": "^0.11.4",

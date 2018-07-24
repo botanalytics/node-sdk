@@ -11,9 +11,4 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
  
 // Use the middleware 
-bot.use(
-  {
-    receive: Botanalytics.receive,
-    send: Botanalytics.send
-  }
-);
+bot.use(Botanalytics);

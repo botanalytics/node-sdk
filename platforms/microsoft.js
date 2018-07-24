@@ -1,10 +1,9 @@
 module.exports = function(token, userConfig) {
 
   // Check token
-  if (!token) {
-
+  if (!token)
     throw new Error('You must provide a Botanalytics token!');
-  }
+
 
   // Create default config
   let config = {
@@ -32,9 +31,9 @@ module.exports = function(token, userConfig) {
 
   return {
 
-    receive: function(session, next) {
+    botbuilder: function(session, next) {
 
-      log.debug('Received message.');
+      log.debug(`Received message:\n ${JSON.stringify(session.message)}`);
 
       request({
 
@@ -42,35 +41,31 @@ module.exports = function(token, userConfig) {
         method: 'POST',
         json: true,
         body: {
-          message: session,
+          message: session.message,
           timestamp: new Date().getTime(),
           is_sender_bot: false
         }
 
-      }, (err, resp, payload) => {
+      }, (err, resp) => {
 
         if (err) {
 
           log.error('Failed to log incoming message.', err);
-
-          if (callback)
-            callback(new Error('Failed to log incoming message'));
-
           return;
         }
 
         err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
-        if (err) {
-
+        if (err)
           log.error('Failed to log incoming message.', err);
-        }
+
       });
+      next();
     },
 
-    send: function(session, next) {
+    send: function(event, next) {
 
-      log.debug('Sent message.');
+      log.debug(`Sent message:\n ${JSON.stringify(event)}`);
 
       request({
 
@@ -78,30 +73,24 @@ module.exports = function(token, userConfig) {
         method: 'POST',
         json: true,
         body: {
-          message: session,
-          timestamp: new Date().getTime(),
+          message: event,
           is_sender_bot: true
         }
 
-      }, (err, resp, payload) => {
+      }, (err, resp) => {
 
         if (err) {
 
           log.error('Failed to log outgoing message.', err);
-
-          if (callback)
-            callback(new Error('Failed to log outgoing message'));
-
           return;
         }
 
         err = log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
-
-        if (err) {
-
+        if (err)
           log.error('Failed to log outgoing message.', err);
-        }
-      })
+
+      });
+      next();
     }
   };
 };
