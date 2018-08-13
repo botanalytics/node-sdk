@@ -1,17 +1,6 @@
 'use strict';
 const util = require('util');
-const extractValues = function(obj){
 
-    const keys = Object.keys(obj);
-
-    const values = [];
-
-    for (let i = 0; i < keys.length; i++) {
-        values.push(obj[keys[i]]);
-    }
-
-    return values;
-};
 module.exports = function(token, userConfig) {
 
     // Check token
@@ -57,7 +46,7 @@ module.exports = function(token, userConfig) {
                             request:event,
                             response:response
                         }
-                    }, (err, resp, payload) => {
+                    }, (err, resp) => {
 
                         if (err) {
 
@@ -106,13 +95,14 @@ module.exports = function(token, userConfig) {
             };
         },
         log : function (incoming, outgoing){
+
             // payload sanity checkings
-            if(!incoming || incoming.constructor !== Object) {
-                log.error('Invalid request payload.', new Error(`Request payload is expected as an object but found: ${incoming.constructor}`));
+            if(!incoming) {
+                log.error('Invalid request payload.', new Error(`Request payload is expected but not found!.`));
                 return;
             }
-            if(!outgoing || outgoing.constructor !== Object) {
-                log.error('Invalid response payload', new Error(`Request payload is expected as an object but found: ${outgoing.constructor}`));
+            if(!outgoing) {
+                log.error('Invalid response payload', new Error(`Response payload is expected but not found.`));
                 return;
             }
             if(!incoming.request){
@@ -127,6 +117,11 @@ module.exports = function(token, userConfig) {
                 log.error('Invalid response payload', new Error("No response field is found in outgoing message."));
                 return;
             }
+
+            log.debug('Logging incoming message: ' + util.inspect(incoming));
+            log.debug('Logging outgoing message: ' + util.inspect(outgoing));
+
+
             request({
                 url: '/messages/amazon-alexa/',
                 method: 'POST',
@@ -135,7 +130,7 @@ module.exports = function(token, userConfig) {
                     request:incoming,
                     response:outgoing
                 }
-            }, (err, resp, payload) => {
+            }, (err, resp) => {
 
                 if (err)
                     log.error('Failed to log incoming message.', err);
