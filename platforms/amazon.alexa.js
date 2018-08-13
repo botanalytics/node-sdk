@@ -105,58 +105,27 @@ module.exports = function(token, userConfig) {
                 }
             };
         },
-        log : function (incoming, outgoing, callback){
-
-            let isCallbackProvided = true;
-
-            if(callback && callback.constructor !== Function){
-                isCallbackProvided = false;
-                log.debug("Callback function is not provided for log.")
+        log : function (incoming, outgoing){
+            // payload sanity checkings
+            if(!incoming || incoming.constructor !== Object) {
+                log.error('Invalid request payload.', new Error(`Request payload is expected as an object but found: ${incoming.constructor}`));
+                return;
             }
-
-            if(!incoming || incoming.constructor !== Object){
-                if(isCallbackProvided) {
-                    callback(new Error(`Request payload is expected as an object but found: ${incoming.constructor}`));
-                    return;
-                }
-                else
-                    return new Error(`Request payload is expected as an object but found: ${incoming.constructor}`);
+            if(!outgoing || outgoing.constructor !== Object) {
+                log.error('Invalid response payload', new Error(`Request payload is expected as an object but found: ${outgoing.constructor}`));
+                return;
             }
-
-            if(!outgoing || outgoing.constructor !== Object){
-                if(isCallbackProvided) {
-                    callback(new Error(`Response payload is expected as an object but found: ${outgoing.constructor}`));
-                    return;
-                }
-                else
-                    return new Error(`Request payload is expected as an object but found: ${outgoing.constructor}`);
-            }
-            //request object sanity
             if(!incoming.request){
-                if(isCallbackProvided){
-                    callback(new Error("No request field is found in incoming message."));
-                    return;
-                }
-                else
-                    return new Error("No request field is found in incoming message.");
+                log.error('Invalid request payload', new Error("No request field is found in incoming message."));
+                return;
             }
             if(!incoming.context){
-
-                if(isCallbackProvided){
-                    callback(new Error("No context field is found in incoming message."));
-                    return;
-                }
-                else
-                    return new Error("No context field is found in incoming message.");
+                log.error('Invalid request payload', new Error("No context field is found in incoming message."));
+                return;
             }
-            //response object sanity
             if(!outgoing.response) {
-                if (isCallbackProvided){
-                    callback(new Error("No response field is found in outgoing message."));
-                    return;
-                 }
-                else
-                    return new Error("No response field is found in outgoing message.");
+                log.error('Invalid response payload', new Error("No response field is found in outgoing message."));
+                return;
             }
             request({
                 url: '/messages/amazon-alexa/',
@@ -168,19 +137,14 @@ module.exports = function(token, userConfig) {
                 }
             }, (err, resp, payload) => {
 
-                if (err) {
-
+                if (err)
                     log.error('Failed to log incoming message.', err);
-
-                    if (isCallbackProvided)
-                        callback(new Error('Failed to log incoming message'));
-
-                } else {
+                else {
 
                     err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
-                    if (isCallbackProvided)
-                        callback(err);
+                    if(err)
+                        log.error('Messages can not be logged.', err);
                 }
             });
         }

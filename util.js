@@ -36,7 +36,7 @@ exports.Logger = function(config) {
             let errorString = response.body && response.body.error_message ? response.body.error_message : response.body;
             switch(response.statusCode) {
                 case 207:
-                    return new Error(`ERROR:${errorString}`);
+                    return new Error(`ERROR: ${errorString}`);
                 case 400:
                     return new Error(`The request was unacceptable. This is often due to missing a required parameter. ERROR:${errorString}`);
                 case 401:
