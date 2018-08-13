@@ -7,10 +7,6 @@ const payloadSanity = function(req, res) {
         return {ok:false, err : new Error(`No request data: ${JSON.stringify(req)}`)};
     if(!res)
         return {ok:false, err : new Error(`No response data: ${JSON.stringify(res)}`)};
-    if(req.constructor !== Object)
-        return {ok:false, err : new Error(`Request data is not an object : ${JSON.stringify(req)}`)};
-    if(res.constructor !== Object)
-        return {ok:false, err : new Error(`Response data is not an object : ${JSON.stringify(res)}`)};
     if(!req.user || !req.conversation || !req.inputs)
         return {ok:false, err : new Error(`Request data is missing one or more of the required fields user, conversation, inputs : ${JSON.stringify(req)}`)};
     if(!(res.expectedInputs || res.finalResponse))
@@ -23,10 +19,6 @@ const payloadSanityDialogflow = function(req, res){
         return {ok:false, err : new Error(`No request data: ${JSON.stringify(req)}`)};
     if(!res)
         return {ok:false, err : new Error(`No response data: ${JSON.stringify(res)}`)};
-    if(req.constructor !== Object)
-        return {ok:false, err : new Error(`Request data is not an object : ${JSON.stringify(req)}`)};
-    if(res.constructor !== Object)
-        return {ok:false, err : new Error(`Response data is not an object : ${JSON.stringify(res)}`)};
     if(!res.payload)
         return {ok:false, err: new Error(`Field <payload> is required in response object: ${JSON.stringify(res)} but not found.`)};
     if(!res.payload.google)
