@@ -74,6 +74,7 @@ module.exports = function(token, userConfig) {
         json: true,
         body: {
           message: event,
+          timestamp: new Date().getTime(),
           is_sender_bot: true
         }
 
