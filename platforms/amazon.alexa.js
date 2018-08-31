@@ -22,8 +22,6 @@ module.exports = function(token, userConfig) {
 
     log.debug('Configuration: ' + util.inspect(config));
 
-    require('request').debug = true;
-
     // Configure request defaults
     const request = require('request').defaults({
         baseUrl: config.baseUrl,
