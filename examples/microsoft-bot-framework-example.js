@@ -1,14 +1,23 @@
+//Microsoft Bot Framework V4 integration
+
 // Initialize the middleware 
-var Botanalytics = require('botanalytics').MicrosoftBotFramework(process.env.BOTANALYTICS_TOKEN, {
-    debug: true
+const Botanalytics = require('botanalytics').MicrosoftBotFramework(process.env.BOTANALYTICS_TOKEN, {
+	debug: true
 });
  
-// Initialize the connector and the bot 
-var connector = new builder.ChatConnector({
-    appId: process.env.MICROSOFT_APP_ID,
-    appPassword: process.env.MICROSOFT_APP_PASSWORD
+// Initialize the adapter and the bot 
+const adapter = new BotFrameworkAdapter({
+    appId: endpointConfig.appId || process.env.microsoftAppID,
+    appPassword: endpointConfig.appPassword || process.env.microsoftAppPassword
 });
-var bot = new builder.UniversalBot(connector);
+
+// Catch-all for errors.
+adapter.onTurnError = async (context, error) => {
+    // This check writes out errors to console log .vs. app insights.
+    console.error(`\n [onTurnError]: ${ error }`);
+    // Send a message to the user
+    await context.sendActivity(`Oops. Something went wrong!`);
+};
  
 // Use the middleware 
-bot.use(Botanalytics);
+adapter.use(Botanalytics.middleware);

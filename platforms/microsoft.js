@@ -1,15 +1,20 @@
+const util = require('util');
+
+var luisRecognizerRef;
+
 module.exports = function(token, userConfig) {
 
   // Check token
-  if (!token)
-    throw new Error('You must provide a Botanalytics token!');
+  if (!token) {
 
+    throw new Error('You must provide a Botanalytics token!');
+  }
 
   // Create default config
-  let config = {
+  var config = {
     baseUrl: 'https://api.botanalytics.co/v1/',
     debug: false
-  };
+  }
 
   // Merge user configuration into the default config
   Object.assign(config, userConfig);
@@ -18,7 +23,7 @@ module.exports = function(token, userConfig) {
 
   log.debug('Logging enabled.');
 
-  log.debug('Configuration: ' + require('util').inspect(config));
+  log.debug('Configuration: ' + util.inspect(config))
 
   // Configure request defaults
   const request = require('request').defaults({
@@ -29,69 +34,98 @@ module.exports = function(token, userConfig) {
     }
   });
 
-  return {
+  function logMessage(payload, is_sender_bot) {
 
-    botbuilder: function(session, next) {
-
-      log.debug(`Received message:\n ${JSON.stringify(session.message)}`);
+    log.debug((is_sender_bot ? 'Received' : 'Sent') + ' message.');
 
       request({
 
-        url: '/messages/microsoft-bot-framework/',
+        url: '/microsoft-bot-framework/messages/',
         method: 'POST',
         json: true,
-        body: {
-          message: session.message,
-          timestamp: new Date().getTime(),
-          is_sender_bot: false
-        }
+        body: payload
 
-      }, (err, resp) => {
+      }, (err, resp, payload) => {
 
         if (err) {
 
-          log.error('Failed to log incoming message.', err);
+          log.error('Failed to log ' + (is_sender_bot ? 'outgoing' : 'incoming') + ' message.', err);
+
+          if (payload.errors) {
+
+            payload.errors.forEach((errorMsg) => log.error(errorMsg));
+          }
+
           return;
         }
 
-        err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
+        err = log.checkResponse(resp, 'Successfully logged ' + (is_sender_bot ? 'outgoing' : 'incoming') + ' message.', 'Failed to log ' + (is_sender_bot ? 'outgoing' : 'incoming') + ' message.');
 
-        if (err)
-          log.error('Failed to log incoming message.', err);
+        if (err) {
 
+          log.error('Failed to log ' + (is_sender_bot ? 'outgoing' : 'incoming') + ' message.', err);
+        }
       });
-      next();
+  }
+
+  return {
+  
+    middleware: async function(context, next) {
+
+      if (context.activity) {
+
+          var activity = context.activity;
+
+          if (luisRecognizerRef) {
+
+            var result = await luisRecognizerRef.recognize(context);
+
+            var nluPayload = {
+              'type': 'luis'
+            };
+
+            Object.assign(nluPayload, result.luisResult);
+
+            activity.nlu_payload = nluPayload;
+          }
+
+          logMessage(activity, false);
+      }
+
+      context.onSendActivities((context, activities, innerNext) => {
+
+        return innerNext().then((result) => {
+
+          if (activities) {
+
+            activities.forEach(async (activity) => {
+
+                if (luisRecognizerRef) {
+                  
+                  var result = await luisRecognizerRef.recognize(context);
+
+                  var nluPayload = {
+                    'type': 'luis'
+                  };
+
+                  Object.assign(nluPayload, result.luisResult);
+
+                  activity.nlu_payload = nluPayload;
+                }
+
+                logMessage(activity, true);
+            });
+          }
+        });
+      });
+
+      return next();
     },
 
-    send: function(event, next) {
+    useLuisRecognizer: function(luisRecognizer) {
 
-      log.debug(`Sent message:\n ${JSON.stringify(event)}`);
-
-      request({
-
-        url: '/messages/microsoft-bot-framework/',
-        method: 'POST',
-        json: true,
-        body: {
-          message: event,
-          timestamp: new Date().getTime(),
-          is_sender_bot: true
-        }
-
-      }, (err, resp) => {
-
-        if (err) {
-
-          log.error('Failed to log outgoing message.', err);
-          return;
-        }
-
-        err = log.checkResponse(resp, 'Successfully logged outgoing message.', 'Failed to log outgoing message.');
-        if (err)
-          log.error('Failed to log outgoing message.', err);
-
-      });
-      next();
+      luisRecognizerRef = luisRecognizer;
     }
+
   };
-};
+}

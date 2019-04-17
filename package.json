@@ -1,6 +1,6 @@
 {
   "name": "botanalytics",
-  "version": "2.4.8",
+  "version": "2.4.9",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
   "author": "Botanalytics",
@@ -8,8 +8,8 @@
     "name": "Enis Gayretli",
     "email": "enis@botanalytics.co"
   }, {
-    "name": "Beyhan Esen",
-    "email": "beyhan@botanalytics.co"
+    "name": "Deniz Acay",
+    "email": "deniz@botanalytics.co"
   }],
   "license": "MIT",
   "repository": {
@@ -39,6 +39,8 @@
     "slack"
   ],
   "dependencies": {
+    "async": "^2.3.0",
+    "ms": "^1.0.0",
     "object-path": "^0.11.4",
     "request": "^2.81.0"
   }
