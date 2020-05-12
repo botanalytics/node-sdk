@@ -58,6 +58,11 @@ exports.setIfAvailable = (sourceObj, destObj, propertyName) => {
 		objectPath.set(destObj, propertyName, objectPath.get(sourceObj, propertyName));
 };
 
+exports.getVersion = () => {
+
+    return require("./package").version;
+};
+
 exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
 
 	if(!botanalyticsToken || !slackBotToken || !config)
@@ -74,7 +79,9 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
         baseUrl: this._config.baseUrl,
         headers: {
             'Authorization': 'Token ' + encodeURIComponent(this._botanalyticsToken),
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Botanalytics-Client-Id': 'node',
+            'X-Botanalytics-Client-Version': util.getVersion()
         }
     });
     this._init = function (data) {
@@ -88,7 +95,9 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
             json: true,
             headers: {
                 'Authorization': 'Token '+encodeURIComponent(self._botanalyticsToken),
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Botanalytics-Client-Id': 'node',
+                'X-Botanalytics-Client-Version': util.getVersion()
             },
             body: data
 

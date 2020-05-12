@@ -31,7 +31,9 @@ module.exports = function(token, userConfig) {
         baseUrl: config.baseUrl,
         headers: {
             'Authorization': 'Token ' + encodeURIComponent(token),
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Botanalytics-Client-Id': 'node',
+            'X-Botanalytics-Client-Version': util.getVersion()
         }
     });
 

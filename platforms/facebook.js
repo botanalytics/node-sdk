@@ -27,8 +27,10 @@ module.exports = function(token, userConfig) {
 	const request = require('request').defaults({
 		baseUrl: config.baseUrl,
 		headers: {
-			'Authorization': 'Token ' + encodeURIComponent(token),
-			'Content-Type': 'application/json'
+            'Authorization': 'Token ' + encodeURIComponent(token),
+            'Content-Type': 'application/json',
+            'X-Botanalytics-Client-Id': 'node',
+            'X-Botanalytics-Client-Version': require('../util').getVersion()
 		}
 	});
 

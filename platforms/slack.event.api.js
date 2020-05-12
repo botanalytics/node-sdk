@@ -26,7 +26,9 @@ module.exports = function (token, slackBotToken, userConfig) {
         baseUrl: this.config.baseUrl,
         headers: {
             'Authorization': 'Token ' + encodeURIComponent(this._token),
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Botanalytics-Client-Id': 'node',
+            'X-Botanalytics-Client-Version': util.getVersion()
         }
     });
 
@@ -55,7 +57,9 @@ module.exports = function (token, slackBotToken, userConfig) {
                 json: true,
                 headers: {
                     'Authorization': 'Token ' + encodeURIComponent(self._token),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Botanalytics-Client-Id': 'node',
+                    'X-Botanalytics-Client-Version': util.getVersion()
                 },
                 body: payload
 
@@ -91,7 +95,9 @@ module.exports = function (token, slackBotToken, userConfig) {
                 json: true,
                 headers: {
                     'Authorization': 'Token ' + encodeURIComponent(self._token),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Botanalytics-Client-Id': 'node',
+                    'X-Botanalytics-Client-Version': util.getVersion()
                 },
                 body: payload
 
