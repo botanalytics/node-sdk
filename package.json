@@ -1,6 +1,6 @@
 {
   "name": "botanalytics",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
   "author": "Botanalytics",

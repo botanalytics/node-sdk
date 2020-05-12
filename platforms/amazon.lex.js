@@ -55,7 +55,7 @@ module.exports = function(token, userConfig) {
             'Authorization': 'Token ' + encodeURIComponent(token),
             'Content-Type': 'application/json',
             'X-Botanalytics-Client-Id': 'node',
-            'X-Botanalytics-Client-Version': require('../util').getVersion()()
+            'X-Botanalytics-Client-Version': require('../util').getVersion()
         }
     });
 
