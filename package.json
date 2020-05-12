@@ -1,6 +1,6 @@
 {
   "name": "botanalytics",
-  "version": "2.4.9",
+  "version": "2.4.10",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
   "author": "Botanalytics",
@@ -14,12 +14,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Botanalyticsco/botanalytics.git"
+    "url": "git+https://github.com/botanalytics/node-sdk.git"
   },
   "bugs": {
-    "url": "https://github.com/Botanalyticsco/botanalytics/issues"
+    "url": "https://github.com/botanalytics/node-sdk/issues"
   },
-  "homepage": "https://github.com/Botanalyticsco/botanalytics#readme",
+  "homepage": "https://github.com/botanalytics/node-sdk#readme",
   "keywords": [
     "botanalytics",
     "bot",
