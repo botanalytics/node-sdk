@@ -81,7 +81,7 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
             'Authorization': 'Token ' + encodeURIComponent(this._botanalyticsToken),
             'Content-Type': 'application/json',
             'X-Botanalytics-Client-Id': 'node',
-            'X-Botanalytics-Client-Version': util.getVersion()
+            'X-Botanalytics-Client-Version': require('../util').getVersion()()
         }
     });
     this._init = function (data) {
@@ -97,7 +97,7 @@ exports.SlackFetcher = function (botanalyticsToken, slackBotToken, config) {
                 'Authorization': 'Token '+encodeURIComponent(self._botanalyticsToken),
                 'Content-Type': 'application/json',
                 'X-Botanalytics-Client-Id': 'node',
-                'X-Botanalytics-Client-Version': util.getVersion()
+                'X-Botanalytics-Client-Version': require('../util').getVersion()()
             },
             body: data
 
