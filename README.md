@@ -1,6 +1,6 @@
 # [Botanalytics](https://botanalytics.co) - Conversational analytics & engagement tool for chatbots
 
-Currently we support
+Currently we support:
 
 
 * [Facebook Messenger](https://botanalytics.co/docs#facebook-messenger)
@@ -11,9 +11,9 @@ Currently we support
 * [Kik](https://botanalytics.co/docs#kik)
 * [Microsoft Bot Framework](https://botanalytics.co/docs#microsoft-bot-framework) 
 
-If you want to use ruby instead, checkout [Botanalytics Ruby SDK](https://github.com/Botanalyticsco/botanalytics-ruby)
+If you want to use Ruby instead, checkout [Botanalytics Ruby SDK](https://github.com/botanalyticsco/ruby-sdk)
 
-If you want to use python instead, checkout [Botanalytics Python SDK](https://github.com/Botanalyticsco/botanalytics-python)
+If you want to use Python instead, checkout [Botanalytics Python SDK](https://github.com/botanalytics/python-sdk)
 
 ## Setup
 
