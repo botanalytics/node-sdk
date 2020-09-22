@@ -72,7 +72,7 @@ module.exports = function(token, userConfig) {
 					err = new Error('Failed to log incoming message');
 
 					if (callback)
-						callback(err);
+						return callback(err);
 					else
 						return err;
 				}
@@ -80,7 +80,7 @@ module.exports = function(token, userConfig) {
 				err = log.checkResponse(resp, 'Successfully logged incoming message.', 'Failed to log incoming message.');
 
 				if (callback)
-					callback(err);
+					return callback(err);
 				else
 					return err;
 			});
