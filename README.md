@@ -1,7 +1,9 @@
-# [Botanalytics](https://botanalytics.co) - Conversational analytics & engagement tool for chatbots
+# Node SDK for [Botanalytics](https://botanalytics.co)
+
+> This version of our SDK is only compatible with the newest version of Botanalytics, currently on private beta.
+> If you are using an older version, please use the SDK version 2.x.
 
 Currently we support:
-
 
 * [Facebook Messenger](https://botanalytics.co/docs#facebook-messenger)
 * [Google Actions](https://botanalytics.co/docs#google-assistant)
