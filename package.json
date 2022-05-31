@@ -1,5 +1,5 @@
 {
-  "name": "botanalytics",
+  "name": "@botanalytics/core",
   "version": "2.5.3",
   "main": "index.js",
   "description": "Conversational analytics & engagement tool for chatbots",
