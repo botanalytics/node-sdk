@@ -1,6 +1,7 @@
 {
   "name": "@botanalytics/core",
   "version": "3.0.0",
+  "type": "module",
   "main": "index.js",
   "description": "Node SDK for Botanalytics",
   "author": "Botanalytics, Inc.",
@@ -42,7 +43,8 @@
     "slack"
   ],
   "dependencies": {
-    "axios": "^0.27.2",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "got": "^12.1.0",
+    "pino": "^8.0.0"
   }
 }
