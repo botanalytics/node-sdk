@@ -9,7 +9,7 @@ const logger = pino();
 // Defaults
 const defaultBaseUrl = 'https://api.botanalytics.co';
 const defaultRequestTimeout = 30000;
-const defaultRetryLimit = 10;
+const defaultRequestRetryLimit = 10;
 
 // Base for different platform clients
 export default class Base {
@@ -18,7 +18,7 @@ export default class Base {
 
 
         // Check for channel
-        if (!process.env.API_KEY && (!options || !options.apiKey)) {
+        if (!process.env.BA_API_KEY && (!options || !options.apiKey)) {
 
             logger.error("API key parameter is required.");
 
@@ -26,8 +26,8 @@ export default class Base {
         }
 
         // Store arguments
-        this.apiKey = process.env.API_KEY || options.apiKey;
-        this.baseUrl = process.env.BASE_URL || (options && options.baseUrl) || defaultBaseUrl;
+        this.apiKey = process.env.BA_API_KEY || options.apiKey;
+        this.baseUrl = process.env.BA_BASE_URL || (options && options.baseUrl) || defaultBaseUrl;
         this.logger = logger;
 
         // Create HTTP client instance
@@ -40,7 +40,7 @@ export default class Base {
                 'Authorization': 'Bearer ' + this.apiKey
             },
             retry: {
-                limit: (process.env.RETRY_LIMIT && parseInt(process.env.RETRY_LIMIT)) || (options && options.retryLimit) || defaultRetryLimit,
+                limit: (process.env.BA_REQUEST_RETRY_LIMIT && parseInt(process.env.BA_REQUEST_RETRY_LIMIT)) || (options && options.requestRetryLimit) || defaultRequestRetryLimit,
                 methods: [
                     'GET',
                     'POST',
@@ -62,7 +62,7 @@ export default class Base {
                 ]
             },
             timeout: {
-                request: (process.env.REQUEST_TIMEOUT && parseInt(process.env.REQUEST_TIMEOUT)) || (options && options.requestTimeout) || defaultRequestTimeout
+                request: (process.env.BA_REQUEST_TIMEOUT && parseInt(process.env.BA_REQUEST_TIMEOUT)) || (options && options.requestTimeout) || defaultRequestTimeout
             },
             hooks: {
                 beforeRetry: [
