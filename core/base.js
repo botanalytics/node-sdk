@@ -16,7 +16,8 @@ export default class Base {
 
     constructor(options) {
 
-        // Check for API key
+
+        // Check for channel
         if (!process.env.API_KEY && (!options || !options.apiKey)) {
 
             logger.error("API key parameter is required.");
