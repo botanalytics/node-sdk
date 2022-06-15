@@ -80,10 +80,10 @@ export default class BaseClient {
             },
             hooks: {
                 beforeRetry: [
-                  async (err, count) => {
+                    async (err, count) => {
 
-                    logger.info("Retrying sending data (attempt %d)...", count)
-                  }
+                        logger.info("Retrying sending data (attempt %d)...", count)
+                    }
                 ],
                 beforeError: [
                     async (err) => {
@@ -143,6 +143,85 @@ export default class BaseClient {
             logger.error("API key does not match the client channel.")
 
             throw new Error("API key does not match the client channel.")
+        }
+    }
+
+    async _sendMessages(...messages) {
+
+        // Sanity check
+        if (messages.length === 0) {
+
+            this.logger.debug('Message array is empty, ignoring send request...')
+
+            return
+        }
+
+        // Create a request body
+        let requestBody = {
+            messages: messages
+              .map(message => Object.assign({}, { message }))
+        }
+
+        // Send the data
+        try {
+
+            const { data } = await this._httpClient.post('/messages', {
+                json: requestBody
+            }).json()
+
+        } catch (e) {
+
+            // Get important fields
+            let { code, response } = e;
+
+            // Check code
+            switch (code) {
+
+                case 'ERR_NON_2XX_3XX_RESPONSE':
+
+                    // Get actual HTTP code
+                    let { statusCode, body } = response;
+
+                    // Check for known status codes
+                    if (statusCode === 400) {
+
+                        logger.warn('Request considered invalid by the API server.')
+
+                    } else if (statusCode === 401) {
+
+                        logger.warn('Request considered unauthorized by the API server.')
+                    }
+
+                    // Get error and warning messages
+                    let { errors, warnings } = body;
+
+                    // Check for errors in the response
+                    if (errors.length)
+                        for (const errorMessage of errors)
+                            logger.error('Received error: %s', errorMessage)
+
+                    // Check for warnings in the response
+                    if (warnings.length)
+                        for (const warningMessage of warnings)
+                            logger.error('Received warning: %s', warningMessage)
+
+                    break;
+
+                case 'ETIMEDOUT':
+                    logger.warn('Request failed due to timeout.')
+                    break;
+
+                case 'ERR_CANCELED':
+                    logger.warn('Request cancelled.')
+                    break;
+
+                case 'ERR_BODY_PARSE_FAILURE':
+                    logger.warn('API server responded but we failed to parse the response body.')
+                    break;
+
+                default:
+                    logger.warn('Request failed due to an underlying network problem.')
+            }
         }
     }
 }
