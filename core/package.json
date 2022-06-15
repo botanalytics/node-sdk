@@ -42,9 +42,17 @@
     "microsoft bot framework",
     "slack"
   ],
+  "scripts": {
+    "test": "mocha --parallel"
+  },
   "dependencies": {
     "dotenv": "^16.0.1",
     "got": "^12.1.0",
     "pino": "^8.0.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.2.0",
+    "mocha": "^10.0.0",
+    "nock": "^13.2.7"
   }
 }

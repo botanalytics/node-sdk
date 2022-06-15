@@ -163,14 +163,21 @@ export default class BaseClient {
         // Send the data
         try {
 
-            const { data } = await this._httpClient.post('/messages', {
+            // Get the response
+            const data = await this._httpClient.post('messages', {
                 json: requestBody
             }).json()
+
+            // Log request ID if available
+            if (data && data.request_id)
+                logger.debug('Message(s) successfully sent with the request ID \'%s\'.', data.request_id)
 
         } catch (e) {
 
             // Get important fields
             let { code, response } = e;
+
+            logger.error(e)
 
             // Check code
             switch (code) {

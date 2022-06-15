@@ -1,1 +1,1 @@
-export { default as UniversalClient } from './universal.js';
+export { default as UniversalClient } from './src/universal.js';
