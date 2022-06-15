@@ -2,9 +2,7 @@
 import 'dotenv/config'
 import pino from 'pino';
 import got from 'got';
-
-// Get package version
-const { version } = require('./package.json');
+import { getVersion } from './util.cjs'
 
 // Configure a pino instance
 const logger = pino();
@@ -51,7 +49,7 @@ export default class BaseClient {
             headers: {
                 'Authorization': 'Bearer ' + this._apiKey,
                 'X-Botanalytics-Client-Id': 'node',
-                'X-Botanalytics-Client-Version': version
+                'X-Botanalytics-Client-Version': getVersion()
             },
             retry: {
                 limit: (process.env.BA_REQUEST_RETRY_LIMIT && parseInt(process.env.BA_REQUEST_RETRY_LIMIT)) || (options && options.requestRetryLimit) || defaultRequestRetryLimit,
