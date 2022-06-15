@@ -3,6 +3,9 @@ import 'dotenv/config'
 import pino from 'pino';
 import got from 'got';
 
+// Get package version
+const { version } = require('./package.json');
+
 // Configure a pino instance
 const logger = pino();
 
@@ -12,7 +15,7 @@ const defaultRequestTimeout = 30000;
 const defaultRequestRetryLimit = 10;
 
 // Base for different platform clients
-export default class Base {
+export default class BaseClient {
 
     constructor(options) {
 
@@ -46,7 +49,9 @@ export default class Base {
             responseType: 'json',
             followRedirect: false,
             headers: {
-                'Authorization': 'Bearer ' + this._apiKey
+                'Authorization': 'Bearer ' + this._apiKey,
+                'X-Botanalytics-Client-Id': 'node',
+                'X-Botanalytics-Client-Version': version
             },
             retry: {
                 limit: (process.env.BA_REQUEST_RETRY_LIMIT && parseInt(process.env.BA_REQUEST_RETRY_LIMIT)) || (options && options.requestRetryLimit) || defaultRequestRetryLimit,
