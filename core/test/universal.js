@@ -1,8 +1,7 @@
-import * as assert from 'assert'
 import nock from 'nock'
 import { faker } from '@faker-js/faker'
 
-import { UniversalClient } from '../index.js'
+import { UniversalClient } from '../src/index.js'
 
 const baseUrl = 'https://api.botanalytics.co'
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huLWRvZSIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMiwiY2hhbm5lbCI6InVuaXZlcnNhbCJ9.Y5wDwFj2MagfkGEl-Y8RVqhYsFwVjeCUoPxc7bRbis0'
