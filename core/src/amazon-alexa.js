@@ -14,7 +14,7 @@ export default class AmazonAlexaClient extends BaseClient {
         }, options))
     }
 
-    requestInterceptor() {
+    requestInterceptor(ignoreErrors) {
 
         // Variable for referencing this
         const that = this;
@@ -30,14 +30,27 @@ export default class AmazonAlexaClient extends BaseClient {
 
                     that.logger.debug('Logging request...')
 
-                    // Send request envelope
-                    await that._sendMessages(handlerInput.requestEnvelope)
+                    try {
+
+                        // Send request envelope
+                        await that._sendMessages(handlerInput.requestEnvelope)
+
+                    } catch (e) {
+
+                        // Log error details
+                        that.logger.error('Failed to send request data.')
+                        that.logger.error(e)
+
+                        // Rethrow error
+                        if (!ignoreErrors)
+                            throw(e);
+                    }
                 }
             }
         }
     }
 
-    responseInterceptor() {
+    responseInterceptor(ignoreErrors) {
 
         // Variable for referencing this
         const that = this;
@@ -62,8 +75,21 @@ export default class AmazonAlexaClient extends BaseClient {
                     // Add request
                     payload.request = handlerInput.requestEnvelope;
 
-                    // Send modified response
-                    await that._sendMessages(payload)
+                    try {
+
+                        // Send modified response
+                        await that._sendMessages(payload)
+
+                    } catch (e) {
+
+                        // Log error details
+                        that.logger.error('Failed to send response data.')
+                        that.logger.error(e)
+
+                        // Rethrow error
+                        if (!ignoreErrors)
+                            throw(e);
+                    }
                 }
             }
         }
