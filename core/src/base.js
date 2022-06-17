@@ -21,7 +21,7 @@ export default class BaseClient {
     constructor(options) {
 
         // Check for API key
-        if (!process.env.BA_API_KEY && (!options || !options.apiKey)) {
+        if ((!options || !options.apiKey) && !process.env.BA_API_KEY) {
 
             logger.error("API key parameter is required.")
 
@@ -33,8 +33,8 @@ export default class BaseClient {
             throw new Error("Internal inconsistency.")
 
         // Store arguments
-        this._apiKey = process.env.BA_API_KEY || options.apiKey;
-        this._baseUrl = process.env.BA_BASE_URL || (options && options.baseUrl) || defaultBaseUrl;
+        this._apiKey = options.apiKey || process.env.BA_API_KEY;
+        this._baseUrl = (options && options.baseUrl) || process.env.BA_BASE_URL || defaultBaseUrl;
         this._channel = options._channel;
 
         // Store logger
@@ -55,7 +55,7 @@ export default class BaseClient {
                 'X-Botanalytics-Client-Version': getVersion()
             },
             retry: {
-                limit: (process.env.BA_REQUEST_RETRY_LIMIT && parseInt(process.env.BA_REQUEST_RETRY_LIMIT)) || (options && options.requestRetryLimit) || defaultRequestRetryLimit,
+                limit: (options && options.hasOwnProperty('requestRetryLimit')) ? options.requestRetryLimit : ((process.env.BA_REQUEST_RETRY_LIMIT && parseInt(process.env.BA_REQUEST_RETRY_LIMIT)) || defaultRequestRetryLimit),
                 methods: [
                     'GET',
                     'POST',
@@ -77,7 +77,7 @@ export default class BaseClient {
                 ]
             },
             timeout: {
-                request: (process.env.BA_REQUEST_TIMEOUT && parseInt(process.env.BA_REQUEST_TIMEOUT)) || (options && options.requestTimeout) || defaultRequestTimeout
+                request: (options && options.requestTimeout) && (process.env.BA_REQUEST_TIMEOUT && parseInt(process.env.BA_REQUEST_TIMEOUT)) || defaultRequestTimeout
             },
             hooks: {
                 beforeRetry: [
@@ -180,8 +180,6 @@ export default class BaseClient {
             // Get important fields
             let { code, response } = e;
 
-            logger.error(e)
-
             // Check code
             switch (code) {
 
@@ -204,12 +202,12 @@ export default class BaseClient {
                     let { errors, warnings } = body;
 
                     // Check for errors in the response
-                    if (errors.length)
+                    if (errors && errors.length)
                         for (const errorMessage of errors)
                             logger.error('Received error: %s', errorMessage)
 
                     // Check for warnings in the response
-                    if (warnings.length)
+                    if (warnings && warnings.length)
                         for (const warningMessage of warnings)
                             logger.error('Received warning: %s', warningMessage)
 
