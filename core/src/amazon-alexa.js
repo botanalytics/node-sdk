@@ -14,7 +14,7 @@ export default class AmazonAlexaClient extends BaseClient {
         }, options))
     }
 
-    requestInterceptor(ignoreErrors) {
+    requestInterceptor() {
 
         // Variable for referencing this
         const that = this;
@@ -30,27 +30,14 @@ export default class AmazonAlexaClient extends BaseClient {
 
                     that.logger.debug('Logging request...')
 
-                    try {
-
-                        // Send request envelope
-                        await that._sendMessages(handlerInput.requestEnvelope)
-
-                    } catch (e) {
-
-                        // Log error details
-                        that.logger.error('Failed to send request data.')
-                        that.logger.error(e)
-
-                        // Rethrow error
-                        if (!ignoreErrors)
-                            throw(e);
-                    }
+                    // Send request envelope
+                    that._sendMessages(handlerInput.requestEnvelope)
                 }
             }
         }
     }
 
-    responseInterceptor(ignoreErrors) {
+    responseInterceptor() {
 
         // Variable for referencing this
         const that = this;
@@ -75,21 +62,8 @@ export default class AmazonAlexaClient extends BaseClient {
                     // Add request
                     payload.request = handlerInput.requestEnvelope;
 
-                    try {
-
-                        // Send modified response
-                        await that._sendMessages(payload)
-
-                    } catch (e) {
-
-                        // Log error details
-                        that.logger.error('Failed to send response data.')
-                        that.logger.error(e)
-
-                        // Rethrow error
-                        if (!ignoreErrors)
-                            throw(e);
-                    }
+                    // Send modified response
+                    that._sendMessages(payload)
                 }
             }
         }
