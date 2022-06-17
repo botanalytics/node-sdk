@@ -27,15 +27,15 @@ export default class FacebookMessengerClient extends BaseClient {
 
             this.logger.error('Please log the webhook request body as-is, including the top level \'object\' field.')
 
-            return
+            throw new Error('Missing object field.')
         }
 
         // Check if object is page
         if (webhookPayload.object !== 'page') {
 
-            this.logger.debug('Unknown object type %s, ignoring...', webhookPayload.object)
+            this.logger.error('Unexpected object type \'%s\', was expecting \'page\'.', webhookPayload.object)
 
-            return
+            throw new Error('Invalid object type.')
         }
 
         // Log entry items if available
@@ -56,15 +56,15 @@ export default class FacebookMessengerClient extends BaseClient {
 
             this.logger.error('Please log the Send API request body as-is, including the top level \'recipient\' field.')
 
-            return
+            throw new Error('Missing recipient field.')
         }
 
         // Ensure that one of the required message or sender_action fields is available
         if (!sendApiPayload.message && !sendApiPayload.sender_action) {
 
-            this.logger.error('Please log the Send API request body as-is, including the top level \'message\' or \'sender_action\' field.')
+            this.logger.error('Please log the Send API request body as-is, including the top level \'message\' or \'sender_action\' fields.')
 
-            return
+            throw new Error('Missing message and sender_action fields.')
         }
 
         // Add timestamp if not present
