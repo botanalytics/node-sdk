@@ -4,13 +4,16 @@ import pino from 'pino';
 import got from 'got';
 import { getVersion } from './util.cjs'
 
-// Configure a pino instance
-const logger = pino();
-
 // Defaults
 const defaultBaseUrl = 'https://api.botanalytics.co';
+const defaultLogLevel = 'info'
 const defaultRequestTimeout = 30000;
 const defaultRequestRetryLimit = 10;
+
+// Configure a pino instance
+const logger = pino({
+    level: process.env.BA_LOG_LEVEL || defaultLogLevel
+});
 
 // Base for different platform clients
 export default class BaseClient {
