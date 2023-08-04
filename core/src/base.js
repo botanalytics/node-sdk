@@ -5,7 +5,7 @@ import got from 'got';
 import { getVersion } from './util.cjs'
 
 // Defaults
-const defaultBaseUrl = 'https://api.botanalytics.co/v2';
+const defaultBaseUrl = 'https://api.beta.botanalytics.co/v2';
 const defaultLogLevel = 'info'
 const defaultRequestTimeout = 30000;
 const defaultRequestRetryLimit = 10;

@@ -8,4 +8,4 @@
 
 Please follow up the steps in the [Getting Started](https://beta.botanalytics.co/docs/integration/sdks/node/getting-started) section of Node SDK documentation.
 
-> For Samsung Bixby, please folo
+> For Samsung Bixby, [please follow](https://docs.beta.botanalytics.co/docs/integration/sdks/node/samsung-bixby).
