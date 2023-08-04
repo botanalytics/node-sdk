@@ -4,7 +4,7 @@ import secret from 'secret';
 import console from 'console';
 
 // Decide on the base URL
-const baseUrl = config.get('botanalytics.baseUrl') || 'https://api.botanalytics.co';
+const baseUrl = config.get('botanalytics.baseUrl') || 'https://api.beta.botanalytics.co';
 
 // Construct target URL
 const targetUrl = baseUrl.endsWith('/') ? baseUrl + 'messages' : baseUrl + '/messages';
