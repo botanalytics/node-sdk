@@ -1,0 +1,65 @@
+{
+  "name": "@botanalytics/core",
+  "version": "3.0.0",
+  "type": "module",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.mjs"
+  },
+  "description": "Node SDK for Botanalytics",
+  "author": "Botanalytics, Inc.",
+  "contributors": [
+    {
+      "name": "Enis Gayretli",
+      "email": "enis@botanalytics.co"
+    },
+    {
+      "name": "Deniz Acay",
+      "email": "deniz@botanalytics.co"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/botanalytics/node-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/botanalytics/node-sdk/issues"
+  },
+  "homepage": "https://github.com/botanalytics/node-sdk#readme",
+  "keywords": [
+    "botanalytics",
+    "bot",
+    "bots",
+    "analytics",
+    "chatbots",
+    "conversational analytics",
+    "facebook messenger",
+    "google assistant",
+    "amazon lex",
+    "amazon alexa",
+    "ibm watson",
+    "botkit",
+    "voice analytics",
+    "google actions",
+    "microsoft bot framework",
+    "slack"
+  ],
+  "scripts": {
+    "test": "mocha --parallel",
+    "build": "esbuild src/index.js --bundle --platform=node --target=node10 --format=cjs --outfile=dist/index.cjs && esbuild src/index.js --bundle --platform=node --target=node10 --format=esm --outfile=dist/index.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "got": "^12.1.0",
+    "pino": "^8.0.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.2.0",
+    "esbuild": "^0.14.44",
+    "mocha": "^10.0.0",
+    "nock": "^13.2.7",
+    "sinon": "^14.0.0"
+  }
+}

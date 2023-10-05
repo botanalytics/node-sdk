@@ -1,0 +1,33 @@
+{
+  "name": "@botanalytics/samsung-bixby",
+  "version": "3.0.0",
+  "type": "module",
+  "description": "Integration library for Samsung Bixby",
+  "author": "Botanalytics, Inc.",
+  "contributors": [
+    {
+      "name": "Deniz Acay",
+      "email": "deniz@botanalytics.co"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/botanalytics/node-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/botanalytics/node-sdk/issues"
+  },
+  "homepage": "https://github.com/botanalytics/node-sdk#readme",
+  "keywords": [
+    "botanalytics",
+    "bot",
+    "bots",
+    "analytics",
+    "chatbots",
+    "conversational analytics",
+    "samsung-bixby",
+    "samsung bixby",
+    "bixby"
+  ]
+}
